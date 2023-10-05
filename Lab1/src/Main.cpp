@@ -1,13 +1,23 @@
+#define GLEW_STATIC
+#include <GL/glew.h>
+
 #include <GLFW/glfw3.h>
+#include <glm/glm.hpp>
+
+#include <iostream>
+
+#include "Shader.h"
+
+// change directory to yours
+#define SHADER_PATH "C:\Adam\GitHub\RA_Labs\Lab1\Shaders"
 
 int main(void)
 {
-    GLFWwindow* window;
-
+    GLFWwindow* window;;
     /* Initialize the library */
     if (!glfwInit())
         return -1;
-
+    
     /* Create a windowed mode window and its OpenGL context */
     window = glfwCreateWindow(640, 480, "Hello World", NULL, NULL);
     if (!window)
@@ -18,6 +28,12 @@ int main(void)
 
     /* Make the window's context current */
     glfwMakeContextCurrent(window);
+
+    if (glewInit() != GLEW_OK)
+    {
+        std::cout << "GLEW unable to be initialized!" << std::endl;
+        return -1;
+    }
 
     /* Loop until the user closes the window */
     while (!glfwWindowShouldClose(window))

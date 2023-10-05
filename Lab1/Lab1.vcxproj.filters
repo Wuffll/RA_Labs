@@ -19,4 +19,12 @@
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
+  <ItemGroup>
+    <None Include="Shaders\general.glsl" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="src\Shader.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+  </ItemGroup>
 </Project>
