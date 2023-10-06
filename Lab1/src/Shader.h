@@ -24,10 +24,16 @@ public:
 	Shader();
 	Shader(const std::string& filePath);
 
-private:
+	unsigned int GetShaderId();
 
+	~Shader();
+
+private:
+	
 	void Init(const std::string& filePath);
+
 	ShaderProgramSource ReadShaderFile(const std::string& filePath);
+	unsigned int CompileShader(unsigned int shaderType, const std::string& source);
 
 	unsigned int mShaderId = 0;
 	std::string mFilePath{};
