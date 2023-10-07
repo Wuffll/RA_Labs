@@ -8,7 +8,7 @@
 
 #include "Shader.h"
 
-#include "Timer.h"
+#include "FpsManager.h"
 
 void GLAPIENTRY MessageCallback(GLenum source,
     GLenum type,
@@ -29,7 +29,7 @@ int main(void)
         return -1;
     
     /* Create a windowed mode window and its OpenGL context */
-    window = glfwCreateWindow(640, 480, "Hello World", NULL, NULL);
+    window = glfwCreateWindow(800, 600, "Hello World", NULL, NULL);
     if (!window)
     {
         glfwTerminate();
@@ -38,6 +38,8 @@ int main(void)
 
     /* Make the window's context current */
     glfwMakeContextCurrent(window);
+
+    // glfwSwapInterval(1);
 
     if (glewInit() != GLEW_OK)
     {
@@ -79,12 +81,13 @@ int main(void)
     Shader shader(std::string(SHADER_PATH).append("\\general.glsl"));
     glUseProgram(shader.GetShaderId());
 
-    Timer timer;
-    unsigned int timePassed = 0;
-    unsigned int fpsLimit = 166;
+    FpsManager fpsManager(61);
+
     /* Loop until the user closes the window */
     while (!glfwWindowShouldClose(window))
     {
+        fpsManager.Begin();
+
         /* Render here */
         glClear(GL_COLOR_BUFFER_BIT);
 
@@ -93,8 +96,16 @@ int main(void)
         /* Swap front and back buffers */
         glfwSwapBuffers(window);
 
-        /* Poll for and process events */
-        glfwPollEvents();
+        while (!fpsManager.TimeToGo())
+        {
+            // Update state until fps limiter allows to draw next frame
+
+            /* Poll for and process events */
+            glfwPollEvents();
+        }
+
+        // std::cout << "FPS: " << fpsManager.GetCurrentFps() << std::endl;
+
     }
 
     glfwTerminate();
