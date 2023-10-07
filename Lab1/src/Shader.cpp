@@ -12,6 +12,8 @@ Shader::Shader()
 }
 
 Shader::Shader(const std::string& filePath)
+	:
+	mFilePath(filePath)
 {
 	Init(filePath);
 }
@@ -124,7 +126,7 @@ unsigned int Shader::CompileShader(unsigned int shaderType, const std::string& s
 		char* msg = (char*)alloca(length * sizeof(char));
 		glGetShaderInfoLog(id, length, &length, &msg[0]);
 
-		std::cout << "Failed to compile shader! (shader = " << shaderType << std::endl;
+		std::cout << "Failed to compile shader! (shader = " << shaderType << ")" << std::endl;
 		std::cout << msg << std::endl;
 
 		glDeleteShader(id);
