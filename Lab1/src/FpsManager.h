@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Timer.h"
+#include "TimeControl.h"
 
 class FpsManager
 {
@@ -22,6 +22,6 @@ private:
 	unsigned int mFpsLimit = 0;
 	unsigned int mCurrentFps = 0;
 	double mWaitTime;
-	Timer mTimer{};
+	TimeControl mTimer{};
 
 };

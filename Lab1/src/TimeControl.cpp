@@ -1,16 +1,16 @@
-#include "Timer.h"
+#include "TimeControl.h"
 
-Timer::Timer()
+TimeControl::TimeControl()
 {
 }
 
-void Timer::Start()
+void TimeControl::Start()
 {
 	mStarted = true;
 	mStart = mClock.now();
 }
 
-double Timer::End()
+double TimeControl::End()
 {
 	if (!mStarted)
 		return 0.0;
@@ -20,17 +20,17 @@ double Timer::End()
 	return DurationInSeconds();
 }
 
-void Timer::Stop()
+void TimeControl::Stop()
 {
 	mStarted = false;
 }
 
-const bool& Timer::IsStarted() const
+const bool& TimeControl::IsStarted() const
 {
 	return mStarted;
 }
 
-double Timer::DurationInSeconds()
+double TimeControl::DurationInSeconds()
 {
 	if (!mStarted)
 		return 0.0;

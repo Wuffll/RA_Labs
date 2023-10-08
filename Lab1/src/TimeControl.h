@@ -5,11 +5,11 @@
 #define Clock std::chrono::steady_clock
 #define TimePoint std::chrono::time_point<Clock>
 
-class Timer
+class TimeControl
 {
 public:
 
-	Timer();
+	TimeControl();
 
 	void Start();
 	double End();
