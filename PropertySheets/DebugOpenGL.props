@@ -8,6 +8,7 @@
       <AdditionalIncludeDirectories>$(SolutionDir)Dependencies\Include\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp20</LanguageStandard>
       <PreprocessorDefinitions>_UNICODE;UNICODE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
     </ClCompile>
     <Link>
       <AdditionalLibraryDirectories>$(SolutionDir)Dependencies\Lib\GLFW338;$(SolutionDir)Dependencies\Lib\glew210;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>

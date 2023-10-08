@@ -148,7 +148,10 @@
     <ClCompile Include="src\Main.cpp" />
     <ClCompile Include="src\Shader.cpp" />
     <ClCompile Include="src\TimeControl.cpp" />
+    <ClCompile Include="src\VertexArray.cpp" />
     <ClCompile Include="src\VertexBuffer.cpp" />
+    <ClCompile Include="src\VertexBufferLayout.cpp" />
+    <ClCompile Include="src\VertexBufferLayout.h" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\FpsManager.h" />
@@ -156,6 +159,7 @@
     <ClInclude Include="src\OpenGLDebugMessageCallback.h" />
     <ClInclude Include="src\Shader.h" />
     <ClInclude Include="src\TimeControl.h" />
+    <ClInclude Include="src\VertexArray.h" />
     <ClInclude Include="src\VertexBuffer.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

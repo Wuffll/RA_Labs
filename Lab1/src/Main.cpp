@@ -1,3 +1,4 @@
+#pragma comment (lib, "glew32s.lib")
 #define GLEW_STATIC
 #include <GL/glew.h>
 
@@ -7,6 +8,7 @@
 #include <iostream>
 
 #include "Shader.h"
+#include "VertexArray.h"
 #include "VertexBuffer.h"
 #include "IndexBuffer.h"
 
@@ -58,13 +60,14 @@ int main(void)
     };
 
     VertexBuffer vBuffer((void*)&points[0], sizeof(points), GL_STATIC_DRAW);
-    glEnableVertexAttribArray(0);
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), 0);
-
-    glEnableVertexAttribArray(1);
-    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (const void*)(sizeof(float) * 3));
-
     IndexBuffer iBuffer((void*)&indices[0], sizeof(indices) / sizeof(unsigned int), GL_STATIC_DRAW);
+
+    VertexBufferLayout layout;
+    layout.Push<float>(3);
+    layout.Push<float>(3);
+
+    VertexArray vArray;
+    vArray.AddBuffer(vBuffer, iBuffer, layout);
 
     Shader shader(std::string(SHADER_PATH).append("\\general.glsl"));
     glUseProgram(shader.GetShaderId());
@@ -78,6 +81,8 @@ int main(void)
 
         /* Render here */
         glClear(GL_COLOR_BUFFER_BIT);
+
+        vArray.Bind();
 
         glDrawElements(GL_TRIANGLES, sizeof(indices), GL_UNSIGNED_INT, nullptr);
 

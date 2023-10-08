@@ -7,8 +7,8 @@ public:
 	VertexBuffer(const void* data, const unsigned int& size, unsigned int usage);
 	~VertexBuffer();
 
-	void Bind();
-	void Unbind();
+	void Bind() const;
+	void Unbind() const;
 
 private:
 

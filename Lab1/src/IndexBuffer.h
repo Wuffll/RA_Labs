@@ -7,8 +7,8 @@ public:
 	IndexBuffer(const void* data, const unsigned int& count, const unsigned int& usage);
 	~IndexBuffer();
 
-	void Bind();
-	void Unbind();
+	void Bind() const;
+	void Unbind() const;
 
 private:
 
