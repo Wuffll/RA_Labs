@@ -10,8 +10,10 @@ public:
 	void Bind() const;
 	void Unbind() const;
 
+	unsigned int GetIndicesCount() const;
+
 private:
 
 	unsigned int mRendererID;
-
+	unsigned int mCount;
 };

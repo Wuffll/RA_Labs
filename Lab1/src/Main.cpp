@@ -11,6 +11,7 @@
 #include "VertexArray.h"
 #include "VertexBuffer.h"
 #include "IndexBuffer.h"
+#include "Renderer.h"
 
 #include "FpsManager.h"
 #include "OpenGLDebugMessageCallback.h"
@@ -25,6 +26,10 @@ int main(void)
     if (!glfwInit())
         return -1;
     
+    // !!! Check if window is being created properly
+    glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
+    glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 5);
+
     /* Create a windowed mode window and its OpenGL context */
     window = glfwCreateWindow(800, 600, "Hello World", NULL, NULL);
     if (!window)
@@ -36,6 +41,8 @@ int main(void)
 
     /* Make the window's context current */
     glfwMakeContextCurrent(window);
+
+    std::cout << "OpenGL " << glGetString(GL_VERSION) << std::endl;
 
     // glfwSwapInterval(1);
 
@@ -78,6 +85,8 @@ int main(void)
     vBuffer.Unbind();
     iBuffer.Unbind();
 
+    Renderer renderer;
+
     FpsManager fpsManager(61);
 
     /* Loop until the user closes the window */
@@ -88,10 +97,13 @@ int main(void)
         /* Render here */
         glClear(GL_COLOR_BUFFER_BIT);
 
+        // !!! Check if uniform are being set properly
         shader.Bind();
-        vArray.Bind();
+        shader.SetUniform4f("uColor", 1.0f, 0.0f, 0.3f, 0.0f);
 
-        glDrawElements(GL_TRIANGLES, sizeof(indices), GL_UNSIGNED_INT, nullptr);
+        // !!! Check if the object is being properly drawn
+        renderer.Draw(vArray, iBuffer.GetIndicesCount(), shader);
+        // glDrawElements(GL_TRIANGLES, sizeof(indices), GL_UNSIGNED_INT, nullptr);
 
         /* Swap front and back buffers */
         glfwSwapBuffers(window);
