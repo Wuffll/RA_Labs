@@ -1,6 +1,7 @@
 #pragma once
 
 #include <string>
+#include <unordered_map>
 
 struct ShaderProgramSource
 {
@@ -21,10 +22,13 @@ class Shader
 {
 public:
 
-	Shader();
 	Shader(const std::string& filePath);
 
-	unsigned int GetShaderId();
+	void Bind() const;
+	void Unbind() const;
+
+	void SetUniform4f(const std::string& name, float& f0, float& f1, float& f2, float& f3);
+	void SetUniform4fv(const std::string& name, const std::vector<float>& vec4f);
 
 	~Shader();
 
@@ -35,6 +39,10 @@ private:
 	ShaderProgramSource ReadShaderFile(const std::string& filePath);
 	unsigned int CompileShader(unsigned int shaderType, const std::string& source);
 
-	unsigned int mShaderId = 0;
+	int GetUniformLocation(const std::string& name);
+
+	unsigned int mRendererID = 0;
+	std::unordered_map<std::string, int> mUniformLocationCache{};
 	std::string mFilePath{};
+
 };

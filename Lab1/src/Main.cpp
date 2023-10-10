@@ -71,7 +71,12 @@ int main(void)
     vArray.AddBuffer(vBuffer, iBuffer, layout);
 
     Shader shader(std::string(SHADER_PATH).append("\\general.glsl"));
-    glUseProgram(shader.GetShaderId());
+    shader.Bind();
+
+    shader.Unbind();
+    vArray.Unbind();
+    vBuffer.Unbind();
+    iBuffer.Unbind();
 
     FpsManager fpsManager(61);
 
@@ -83,6 +88,7 @@ int main(void)
         /* Render here */
         glClear(GL_COLOR_BUFFER_BIT);
 
+        shader.Bind();
         vArray.Bind();
 
         glDrawElements(GL_TRIANGLES, sizeof(indices), GL_UNSIGNED_INT, nullptr);

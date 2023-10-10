@@ -7,10 +7,6 @@
 #include <vector>
 #include <fstream>
 
-Shader::Shader()
-{
-}
-
 Shader::Shader(const std::string& filePath)
 	:
 	mFilePath(filePath)
@@ -18,54 +14,77 @@ Shader::Shader(const std::string& filePath)
 	Init(filePath);
 }
 
-unsigned int Shader::GetShaderId()
+void Shader::Bind() const
 {
-	return mShaderId;
+	glUseProgram(mRendererID);
+}
+
+void Shader::Unbind() const
+{
+	glUseProgram(0);
+}
+
+void Shader::SetUniform4f(const std::string& name, float& f0, float& f1, float& f2, float& f3)
+{
+	int location = GetUniformLocation(name);
+
+	if (location == -1)
+		return;
+
+	glUniform4f(location, f0, f1, f2, f3);
+}
+
+void Shader::SetUniform4fv(const std::string& name, const std::vector<float>& vec4f)
+{
+	int location = GetUniformLocation(name);
+
+	if (location == -1)
+		return;
+
+	glUniform4fv(location, 4, vec4f.data());
 }
 
 Shader::~Shader()
 {
-	glDeleteProgram(mShaderId);
+	glDeleteProgram(mRendererID);
 }
 
 void Shader::Init(const std::string& filePath)
 {
 	ShaderProgramSource source = ReadShaderFile(filePath);
 
-	unsigned int program = glCreateProgram();
+	mRendererID = glCreateProgram();
 	unsigned int shader;
 	std::vector<unsigned int> shaders{};
 
 	if (source.Vertex.size() != 0)
 	{
 		shader = CompileShader(GL_VERTEX_SHADER, source.Vertex);
-		glAttachShader(program, shader);
+		glAttachShader(mRendererID, shader);
 		shaders.push_back(shader);
 	}
 
 	if (source.Fragment.size() != 0)
 	{
 		shader = CompileShader(GL_FRAGMENT_SHADER, source.Fragment);
-		glAttachShader(program, shader);
+		glAttachShader(mRendererID, shader);
 		shaders.push_back(shader);
 	}
 
 	if (source.Geometry.size() != 0)
 	{
 		shader = CompileShader(GL_GEOMETRY_SHADER, source.Geometry);
-		glAttachShader(program, shader);
+		glAttachShader(mRendererID, shader);
 		shaders.push_back(shader);
 	}
 
-	glLinkProgram(program);
-	glValidateProgram(program);
+	glLinkProgram(mRendererID);
+	glValidateProgram(mRendererID);
 
 	for (auto& s : shaders)
 	{
 		glDeleteShader(s);
 	}
-
-	mShaderId = program;
 }
 
 ShaderProgramSource Shader::ReadShaderFile(const std::string& filePath)
@@ -134,4 +153,21 @@ unsigned int Shader::CompileShader(unsigned int shaderType, const std::string& s
 	}
 
 	return id;
+}
+
+int Shader::GetUniformLocation(const std::string& name)
+{
+	if (mUniformLocationCache.find(name) != mUniformLocationCache.end())
+		return mUniformLocationCache[name];
+
+	int location = glGetUniformLocation(mRendererID, name.c_str());
+
+	if (location == -1)
+	{
+		std::cout << "There is no uniform with name \"" << name << "\"! (mRendererID = " << mRendererID << ")" << std::endl;
+		return location;
+	}
+
+	mUniformLocationCache[name] = location;
+	return location;
 }
