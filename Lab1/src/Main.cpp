@@ -30,6 +30,7 @@ int main(void)
     if (!window)
     {
         glfwTerminate();
+        printf("ERROR: Unable to create window!\n");
         return -1;
     }
 
@@ -40,7 +41,7 @@ int main(void)
 
     if (glewInit() != GLEW_OK)
     {
-        std::cout << "GLEW unable to be initialized!" << std::endl;
+        std::cout << "ERROR: GLEW unable to be initialized!" << std::endl;
         return -1;
     }
 
