@@ -5,6 +5,10 @@
 #include <GLFW/glfw3.h>
 #include <glm/glm.hpp>
 
+#include <assimp/Importer.hpp>
+#include <assimp/scene.h>
+#include <assimp/postprocess.h>
+
 #include <iostream>
 
 #include "Shader.h"
@@ -54,6 +58,9 @@ int main(void)
 
     glEnable(GL_DEBUG_OUTPUT);
     glDebugMessageCallback(MessageCallback, NULL);
+
+    Assimp::Importer importer;
+    const aiScene* scene = importer.ReadFile("", 0);
 
     float points[] = {
         -0.5f, -0.5f, 1.0f, 1.0f, 0.0f, 0.0f,
