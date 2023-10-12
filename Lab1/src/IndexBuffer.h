@@ -4,8 +4,11 @@ class IndexBuffer
 {
 public:
 
+	IndexBuffer();
 	IndexBuffer(const void* data, const unsigned int& count, const unsigned int& usage);
 	~IndexBuffer();
+
+	void FillBuffer(const void* data, const unsigned int& count, const unsigned int& usage);
 
 	void Bind() const;
 	void Unbind() const;
@@ -15,5 +18,5 @@ public:
 private:
 
 	unsigned int mRendererID;
-	unsigned int mCount;
+	unsigned int mCount = 0;
 };
