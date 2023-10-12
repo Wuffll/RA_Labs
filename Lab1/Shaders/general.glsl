@@ -11,7 +11,7 @@ out vec3 vColor;
 void main()
 {
 	gl_Position = vec4(position, 1.0f);
-	vColor = uColor;
+	vColor = vec3(uColor.xyz);
 }
 
 #shader FRAG
