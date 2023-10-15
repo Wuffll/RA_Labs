@@ -2,7 +2,7 @@
 
 #include <GL/glew.h>
 
-#include <iostream>
+#include "Debug.h"
 
 #define INDEX_SIZE sizeof(unsigned int) // for indices, type is *unsigned int*
 
@@ -43,8 +43,7 @@ void IndexBuffer::Bind() const
 {
 	if (mCount == 0)
 	{
-		printf("ERROR: There is no data in the index buffer!\n");
-		exit(-1);
+		Debug::ThrowException("Index buffer " + std::to_string(mRendererID) + " is not initialized! (count = 0)");
 	}
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mRendererID);
 }

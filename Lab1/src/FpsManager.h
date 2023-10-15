@@ -14,6 +14,8 @@ public:
 
 	unsigned int GetCurrentFps() const;
 
+	const TimeControl& GetTimer() const;
+
 	void Begin();
 	bool TimeToGo();
 

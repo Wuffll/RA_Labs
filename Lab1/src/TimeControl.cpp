@@ -1,5 +1,7 @@
 #include "TimeControl.h"
 
+#include "Debug.h"
+
 TimeControl::TimeControl()
 {
 }
@@ -30,10 +32,13 @@ const bool& TimeControl::IsStarted() const
 	return mStarted;
 }
 
-double TimeControl::DurationInSeconds()
+double TimeControl::DurationInSeconds() const
 {
 	if (!mStarted)
 		return 0.0;
 
-	return ((std::chrono::duration<float>)(mEnd - mStart)).count();
+	double duration = ((std::chrono::duration_cast<std::chrono::nanoseconds>)(mEnd - mStart)).count() / 1000000000.0;
+	// Debug::Print("Duration = " + std::to_string(duration));
+
+	return (duration >= 0.0) ? duration : 0.0;
 }

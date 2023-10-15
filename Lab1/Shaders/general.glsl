@@ -4,14 +4,16 @@
 layout (location = 0) in vec3 position;
 layout (location = 1) in vec3 color;
 
-uniform vec4 uColor;
+uniform mat4 model;
+uniform mat4 view;
+uniform mat4 projection;
 
 out vec3 vColor;
 
 void main()
 {
-	gl_Position = vec4(position, 1.0f);
-	vColor = vec3(uColor.xyz);
+	gl_Position = projection * view * model * vec4(position, 1.0f);
+	vColor = color;
 }
 
 #shader FRAG
@@ -23,5 +25,5 @@ out vec4 color;
 
 void main()
 {
-	color = vec4(vColor, 1.0f);
+	color = vec4(vColor, 1.0f) + vec4(0.1f, 0.1f, 0.1f, 0.0f);
 }

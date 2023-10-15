@@ -2,7 +2,7 @@
 
 #include <GL/glew.h>
 
-#include <iostream>
+#include "Debug.h"
 
 VertexBuffer::VertexBuffer()
 {
@@ -36,8 +36,7 @@ void VertexBuffer::Bind() const
 {
 	if (!mInitialized)
 	{
-		printf("There is no data in the vertex buffer!\n");
-		exit(-1);
+		Debug::ThrowException("Vertex buffer " + std::to_string(mRendererID) + " is uninitialized! (mInitialized = false)");
 	}
 
 	glBindBuffer(GL_ARRAY_BUFFER, mRendererID);

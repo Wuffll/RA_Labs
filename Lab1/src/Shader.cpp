@@ -24,6 +24,16 @@ void Shader::Unbind() const
 	glUseProgram(0);
 }
 
+void Shader::SetUniformMatrix4f(const std::string& name, const glm::mat4& matrix)
+{
+	int location = GetUniformLocation(name);
+
+	if (location == -1)
+		return;
+
+	glUniformMatrix4fv(location, 1, GL_FALSE, &matrix[0][0]);
+}
+
 void Shader::SetUniform4f(const std::string& name, float f0, float f1, float f2, float f3)
 {
 	int location = GetUniformLocation(name);
@@ -164,7 +174,7 @@ int Shader::GetUniformLocation(const std::string& name)
 
 	if (location == -1)
 	{
-		std::cout << "There is no uniform with name \"" << name << "\"! (mRendererID = " << mRendererID << ")" << std::endl;
+		std::cout << "There is no uniform with name \"" << name << "\"! (mRendererID = " << mRendererID << "; check whether the uniform is used in GLSL shader)" << std::endl;
 		return location;
 	}
 

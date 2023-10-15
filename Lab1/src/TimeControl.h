@@ -2,7 +2,7 @@
 
 #include <chrono>
 
-#define Clock std::chrono::steady_clock
+#define Clock std::chrono::high_resolution_clock
 #define TimePoint std::chrono::time_point<Clock>
 
 class TimeControl
@@ -18,7 +18,7 @@ public:
 
 	const bool& IsStarted() const;
 
-	double DurationInSeconds();
+	double DurationInSeconds() const;
 
 private:
 
