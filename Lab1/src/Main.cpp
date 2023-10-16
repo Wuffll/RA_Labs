@@ -37,8 +37,10 @@ int main(void)
 {
     GLFWwindow* window = InitWindow();
 
-    std::vector<glm::vec3> controlPoints{ {0.0f, 0.0f, 0.0f}, {5.0f, 0.0f, 0.0f}, {5.0f, 5.0f, 0.0f}, {0.0f, 5.0f, 0.0f}, {0.0f, 5.0f, 0.0f}, {0.0f, 5.0f, 0.0f} };
-    CubicBSpline spline(controlPoints, 2000);
+    std::vector<glm::vec3> controlPoints{ {0.0f, 2.5f, 0.0f}, {5.0f, 2.5f, 0.0f}, {5.0f, -2.5f, 0.0f}, {0.0f, -2.5f, 0.0f} };
+    CubicBSpline spline(controlPoints, 1000);
+
+    VertexBuffer splineBuffer(spline.GetSplinePoints().data(), spline.GetSplinePoints().size() * sizeof(Vertex), GL_STATIC_DRAW);
 
     Mesh mesh(std::string(MODELS_PATH).append("airplane_f16.obj"));
 
@@ -55,6 +57,17 @@ int main(void)
     shader.Unbind();
     vArray.Unbind();
 
+    /*
+    VertexArray vArray2;
+    vArray2.Bind();
+    splineBuffer.Bind();
+    glEnableVertexAttribArray(0);
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), nullptr);
+
+    glEnableVertexAttribArray(1);
+    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)(sizeof(float) * 3));
+    */
+
     Renderer renderer;
 
     FpsManager fpsManager(60);
@@ -63,13 +76,14 @@ int main(void)
     shader.SetUniformMatrix4f("model", mesh.GetTransform());
 
     glm::mat4 view(1.0f);
-    view = glm::translate(view, glm::vec3(0.0, 0.0, -2.5));
+    view = glm::translate(view, glm::vec3(0.0f, 0.0f, -3.0f));
 
     view = glm::rotate(view, glm::radians(20.0f), glm::vec3(1.0, 0.0, 0.0));
 
-    glm::mat4 projection = glm::perspective(45.0f, 1.0f, 0.1f, 100.0f);
+    glm::mat4 projection = glm::perspective(45.0f, 1.0f, 0.1f, 1000.0f);
 
     shader.SetUniformMatrix4f("projection", projection);
+    shader.SetUniformMatrix4f("view", view);
 
     TimeControl timer;
     timer.Start();
@@ -91,7 +105,8 @@ int main(void)
 
         // !!! Check if the object is being properly drawn
         renderer.Draw(vArray, mesh.GetIB().GetIndicesCount(), shader);
-        // glDrawElements(GL_TRIANGLES, sizeof(indices), GL_UNSIGNED_INT, nullptr);
+
+        // glDrawArrays(GL_LINE_STRIP, NULL, spline.GetSplinePoints().size());
 
         /* Swap front and back buffers */
         glfwSwapBuffers(window);

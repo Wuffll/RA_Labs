@@ -44,7 +44,7 @@ void CubicBSpline::FillSplinePoints(const std::vector<glm::vec3>& controlPoints,
 
 			mSplinePoints.push_back({ opResult, {1.0f, 1.0f, 1.0f} });
 
-			std::cout << mSplinePoints[mSplinePoints.size() - 1].pos.x << ", " << mSplinePoints[mSplinePoints.size() - 1].pos.y << ", " << mSplinePoints[mSplinePoints.size() - 1].pos.z << std::endl;
+			// std::cout << mSplinePoints[mSplinePoints.size() - 1].pos.x << ", " << mSplinePoints[mSplinePoints.size() - 1].pos.y << ", " << mSplinePoints[mSplinePoints.size() - 1].pos.z << std::endl;
 		}
 	}
 	// TODO

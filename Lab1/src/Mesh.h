@@ -7,17 +7,12 @@
 #include <limits>
 
 #include "VertexArray.h"
+#include "Vertex.h"
 
 struct MinMax
 {
 	double min = std::numeric_limits<double>::max();
 	double max = std::numeric_limits<double>::min();
-};
-
-struct Vertex
-{
-	glm::vec3 pos;
-	glm::vec3 normal;
 };
 
 class Mesh
