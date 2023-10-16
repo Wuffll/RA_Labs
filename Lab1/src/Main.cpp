@@ -19,6 +19,8 @@
 #include "Renderer.h"
 #include "Mesh.h"
 
+#include "Spline.h"
+
 #include "FpsManager.h"
 #include "OpenGLDebugMessageCallback.h"
 
@@ -34,6 +36,9 @@ GLFWwindow* InitWindow();
 int main(void)
 {
     GLFWwindow* window = InitWindow();
+
+    std::vector<glm::vec3> controlPoints{ {0.0f, 0.0f, 0.0f}, {5.0f, 0.0f, 0.0f}, {5.0f, 5.0f, 0.0f}, {0.0f, 5.0f, 0.0f}, {0.0f, 5.0f, 0.0f}, {0.0f, 5.0f, 0.0f} };
+    CubicBSpline spline(controlPoints, 2000);
 
     Mesh mesh(std::string(MODELS_PATH).append("airplane_f16.obj"));
 
