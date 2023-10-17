@@ -21,6 +21,7 @@ VertexBuffer::VertexBuffer(const void* data, const unsigned int& size, unsigned 
 
 VertexBuffer::~VertexBuffer()
 {
+	Debug::Print("Vertex buffer " + std::to_string(mRendererID) + " destroyed!");
 	glDeleteBuffers(1, &mRendererID);
 }
 
@@ -30,6 +31,11 @@ void VertexBuffer::FillBuffer(const void* data, const unsigned int& size, unsign
 	glBufferData(GL_ARRAY_BUFFER, size, data, usage);
 
 	mInitialized = true;
+}
+
+const unsigned int& VertexBuffer::GetRendererID() const
+{
+	return mRendererID;
 }
 
 void VertexBuffer::Bind() const

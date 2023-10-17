@@ -70,8 +70,8 @@ Mesh::Mesh(const std::string& filePath)
         }
     }
 
-    mVBO.FillBuffer((void*)mVertices.data(), mVertices.size() * sizeof(Vertex), GL_STATIC_DRAW);
-    mIBO.FillBuffer((void*)mIndices.data(), mIndices.size(), GL_STATIC_DRAW);
+    mVBO.FillBuffer(mVertices.data(), mVertices.size() * sizeof(Vertex), GL_STATIC_DRAW);
+    mIBO.FillBuffer(mIndices.data(), mIndices.size(), GL_STATIC_DRAW);
 }
 
 Mesh::~Mesh()

@@ -25,6 +25,7 @@ IndexBuffer::IndexBuffer(const void* data, const unsigned int& count, const unsi
 
 IndexBuffer::~IndexBuffer()
 {
+	Debug::Print("Index buffer " + std::to_string(mRendererID) + " destroyed!");
 	glDeleteBuffers(1, &mRendererID);
 }
 

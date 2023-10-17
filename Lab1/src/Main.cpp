@@ -18,6 +18,7 @@
 #include "IndexBuffer.h"
 #include "Renderer.h"
 #include "Mesh.h"
+#include "Objekt.h"
 
 #include "Spline.h"
 
@@ -37,6 +38,8 @@ int main(void)
 {
     GLFWwindow* window = InitWindow();
 
+    Shader shader(std::string(SHADER_PATH).append("\\general.glsl"));
+
     std::vector<glm::vec3> controlPoints{ {0.0f, 2.5f, 0.0f}, {5.0f, 2.5f, 0.0f}, {5.0f, -2.5f, 0.0f}, {0.0f, -2.5f, 0.0f} };
     CubicBSpline spline(controlPoints, 1000);
 
@@ -44,19 +47,8 @@ int main(void)
 
     Mesh mesh(std::string(MODELS_PATH).append("airplane_f16.obj"));
 
-    VertexBufferLayout layout;
-    layout.Push<float>(3);
-    layout.Push<float>(3);
-
-    VertexArray vArray;
-    vArray.AddBuffer(mesh.GetVB(), mesh.GetIB(), layout);
-
-    Shader shader(std::string(SHADER_PATH).append("\\general.glsl"));
-    shader.Bind();
-
-    shader.Unbind();
-    vArray.Unbind();
-
+    Objekt obj("FirstObject", std::string(MODELS_PATH).append("airplane_f16.obj"), shader);
+    
     /*
     VertexArray vArray2;
     vArray2.Bind();
@@ -67,8 +59,11 @@ int main(void)
     glEnableVertexAttribArray(1);
     glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)(sizeof(float) * 3));
     */
+    
+    Renderer renderer(shader);
 
-    Renderer renderer;
+    renderer.AddDrawableObject(obj);
+    renderer.AddDrawableObject(spline);
 
     FpsManager fpsManager(60);
 
@@ -76,9 +71,9 @@ int main(void)
     shader.SetUniformMatrix4f("model", mesh.GetTransform());
 
     glm::mat4 view(1.0f);
-    view = glm::translate(view, glm::vec3(0.0f, 0.0f, -3.0f));
+    view = glm::translate(view, glm::vec3(0.0f, 0.0f, -10.0f));
 
-    view = glm::rotate(view, glm::radians(20.0f), glm::vec3(1.0, 0.0, 0.0));
+    // view = glm::rotate(view, glm::radians(75.0f), glm::vec3(1.0, 0.0, 0.0));
 
     glm::mat4 projection = glm::perspective(45.0f, 1.0f, 0.1f, 1000.0f);
 
@@ -103,10 +98,12 @@ int main(void)
         if (deltaTime - 4.0f >= 0.000002f)
             deltaTime = 0.0f;
 
-        // !!! Check if the object is being properly drawn
-        renderer.Draw(vArray, mesh.GetIB().GetIndicesCount(), shader);
-
+        shader.SetUniformMatrix4f("model", glm::mat4(1.0f));
         // glDrawArrays(GL_LINE_STRIP, NULL, spline.GetSplinePoints().size());
+
+        // !!! Check if the object is being properly drawn
+
+        renderer.Draw();
 
         /* Swap front and back buffers */
         glfwSwapBuffers(window);
@@ -119,7 +116,7 @@ int main(void)
             glfwPollEvents();
         } while (!fpsManager.TimeToGo()); // should eventually replace while loop with sleep
 
-        std::cout << "FPS: " << fpsManager.GetCurrentFps() << std::endl;
+        // std::cout << "FPS: " << fpsManager.GetCurrentFps() << std::endl;
     }
 
     glfwTerminate();

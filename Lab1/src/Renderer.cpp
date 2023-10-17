@@ -1,9 +1,23 @@
 #include "Renderer.h"
 
-void Renderer::Draw(const VertexArray& vArray, const unsigned int& indicesCount, const Shader& shader) const
+Renderer::Renderer(Shader& shader)
+	:
+	mShader(shader)
 {
-	shader.Bind();
-	vArray.Bind();
+}
 
-	glDrawElements(GL_TRIANGLES, indicesCount, GL_UNSIGNED_INT, nullptr);
+void Renderer::Draw() const
+{
+	mShader.Bind();
+
+	for (const auto& obj : mDrawableObjects)
+	{
+		mShader.SetUniformMatrix4f("model", obj->GetTransform());
+		obj->Draw();
+	}
+}
+
+void Renderer::AddDrawableObject(Drawable& object)
+{
+	mDrawableObjects.push_back(&object);
 }

@@ -10,6 +10,8 @@ public:
 
 	void FillBuffer(const void* data, const unsigned int& size, unsigned int usage);
 
+	const unsigned int& GetRendererID() const;
+
 	void Bind() const;
 	void Unbind() const;
 

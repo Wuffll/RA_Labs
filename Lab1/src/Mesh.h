@@ -29,7 +29,6 @@ public:
 	
 private:
 
-	//VertexArray& mVAO;
 	VertexBuffer mVBO;
 	IndexBuffer mIBO;
 
