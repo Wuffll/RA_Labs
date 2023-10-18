@@ -47,7 +47,7 @@ void Transform::ResetScale()
 
 void Transform::Translation(const glm::vec3& translation)
 {
-	mMatrix = glm::translate(mMatrix, translation);
+	mMatrix = glm::translate(mMatrix, translation / mScale);
 	mPosition += translation;
 }
 

@@ -93,7 +93,7 @@ int main(void)
 
         // !!! Check if uniform are being set properly
         deltaTime += timer.End();
-        view.Rotate((float)timer.End() * glm::vec3(0.0f, 90.0f, 0.0f));
+        // view.Rotate((float)timer.End() * glm::vec3(0.0f, 90.0f, 0.0f));
         shader.SetUniformMatrix4f("view", view.GetMatrix());
 
         if (deltaTime - 4.0f >= 0.000002f)
@@ -101,9 +101,9 @@ int main(void)
             deltaTime = 0.0f;
         }
 
-        if (i < spline.GetSplinePoints().size() - 1)
-            i++;
-        else
+        i += 2;
+
+        if (i >= spline.GetSplinePoints().size())
             i = 0;
 
         obj.GetTransform().SetPosition(spline.GetSplinePoints()[i].pos);
