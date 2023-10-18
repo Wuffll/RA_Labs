@@ -1,13 +1,12 @@
 #pragma once
-
-#include <glm/glm.hpp>
-
 #include <vector>
 #include <string>
 #include <limits>
 
 #include "VertexArray.h"
 #include "Vertex.h"
+
+#include "Transform.h"
 
 struct MinMax
 {
@@ -25,14 +24,14 @@ public:
 	const VertexBuffer& GetVB() const;
 	const IndexBuffer& GetIB() const;
 
-	const glm::mat4& GetTransform() const;
+	const Transform& GetTransform() const;
 	
 private:
 
 	VertexBuffer mVBO;
 	IndexBuffer mIBO;
 
-	glm::mat4 mTransformMatrix;
+	Transform mTransformMatrix;
 
 	std::vector<Vertex> mVertices{};
 	std::vector<unsigned int> mIndices{};

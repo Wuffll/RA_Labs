@@ -25,7 +25,7 @@ void Objekt::Draw() const
 	glDrawElements(GL_TRIANGLES, mMesh.GetIB().GetIndicesCount(), GL_UNSIGNED_INT, nullptr);
 }
 
-const glm::mat4& Objekt::GetTransform() const
+Transform& Objekt::GetTransform()
 {
 	return mTransform;
 }

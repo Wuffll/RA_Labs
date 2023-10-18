@@ -52,6 +52,8 @@ void CubicBSpline::FillSplinePoints(const std::vector<glm::vec3>& controlPoints,
 		}
 	}
 
+	mVArray.Bind();
+
 	mVBuffer.FillBuffer(mSplinePoints.data(), mSplinePoints.size() * sizeof(Vertex), GL_STATIC_DRAW);
 	mIBuffer.FillBuffer(indices.data(), indices.size(), GL_STATIC_DRAW);
 
@@ -65,14 +67,12 @@ void CubicBSpline::FillSplinePoints(const std::vector<glm::vec3>& controlPoints,
 void CubicBSpline::Draw() const
 {
 	mVArray.Bind();
+	mIBuffer.Bind(); // i thought that VAO stored state about the index buffer ???
 
-	glLineWidth(5.0f);
-	glDrawArrays(GL_LINE_STRIP, 0, mSampleRate);
-	// glLineWidth(1.0f);
-	// glDrawElements(GL_LINE_STRIP, mSampleRate, GL_UNSIGNED_INT, nullptr);
+	glDrawElements(GL_LINE_STRIP, mSampleRate, GL_UNSIGNED_INT, nullptr);
 }
 
-const glm::mat4& CubicBSpline::GetTransform() const
+Transform& CubicBSpline::GetTransform()
 {
 	return mTransform;
 }

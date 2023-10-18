@@ -19,8 +19,9 @@
 #include "Renderer.h"
 #include "Mesh.h"
 #include "Objekt.h"
-
 #include "Spline.h"
+
+#include "Transform.h"
 
 #include "FpsManager.h"
 #include "OpenGLDebugMessageCallback.h"
@@ -65,24 +66,23 @@ int main(void)
     renderer.AddDrawableObject(obj);
     renderer.AddDrawableObject(spline);
 
-    FpsManager fpsManager(60);
-
-    shader.Bind();
-    shader.SetUniformMatrix4f("model", mesh.GetTransform());
-
-    glm::mat4 view(1.0f);
-    view = glm::translate(view, glm::vec3(0.0f, 0.0f, -10.0f));
+    Transform view;
+    view.Translation(glm::vec3(0.0f, 0.0f, -10.0f));
 
     // view = glm::rotate(view, glm::radians(75.0f), glm::vec3(1.0, 0.0, 0.0));
 
-    glm::mat4 projection = glm::perspective(45.0f, 1.0f, 0.1f, 1000.0f);
+    Transform projection(glm::perspective(45.0f, 1.0f, 0.1f, 1000.0f));
 
-    shader.SetUniformMatrix4f("projection", projection);
-    shader.SetUniformMatrix4f("view", view);
+    shader.Bind();
+    shader.SetUniformMatrix4f("projection", projection.GetMatrix());
+    shader.SetUniformMatrix4f("view", view.GetMatrix());
 
+    FpsManager fpsManager(60);
     TimeControl timer;
     timer.Start();
     float deltaTime = 0.0f;
+
+    int i = 0;
     /* Loop until the user closes the window */
     while (!glfwWindowShouldClose(window))
     {
@@ -93,15 +93,20 @@ int main(void)
 
         // !!! Check if uniform are being set properly
         deltaTime += timer.End();
-        shader.SetUniformMatrix4f("view", glm::rotate(view, glm::radians(90.0f) * deltaTime, glm::vec3(0.0f, 1.0f, 0.0f)));
+        view.Rotate((float)timer.End() * glm::vec3(0.0f, 90.0f, 0.0f));
+        shader.SetUniformMatrix4f("view", view.GetMatrix());
 
         if (deltaTime - 4.0f >= 0.000002f)
+        {
             deltaTime = 0.0f;
+        }
 
-        shader.SetUniformMatrix4f("model", glm::mat4(1.0f));
-        // glDrawArrays(GL_LINE_STRIP, NULL, spline.GetSplinePoints().size());
+        if (i < spline.GetSplinePoints().size() - 1)
+            i++;
+        else
+            i = 0;
 
-        // !!! Check if the object is being properly drawn
+        obj.GetTransform().SetPosition(spline.GetSplinePoints()[i].pos);
 
         renderer.Draw();
 
@@ -116,7 +121,7 @@ int main(void)
             glfwPollEvents();
         } while (!fpsManager.TimeToGo()); // should eventually replace while loop with sleep
 
-        // std::cout << "FPS: " << fpsManager.GetCurrentFps() << std::endl;
+        std::cout << "FPS: " << fpsManager.GetCurrentFps() << std::endl;
     }
 
     glfwTerminate();

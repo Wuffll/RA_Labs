@@ -22,7 +22,6 @@ public:
 
 private:
 
-	Clock mClock{};
 	TimePoint mStart;
 	TimePoint mEnd;
 	bool mStarted = false;

@@ -8,6 +8,7 @@
 #include "VertexArray.h"
 #include "Mesh.h"
 #include "Shader.h"
+#include "Transform.h"
 
 class Objekt : public Drawable
 {
@@ -18,13 +19,13 @@ public:
 
 	void Draw() const;
 
-	const glm::mat4& GetTransform() const;
+	Transform& GetTransform();
 
 private:
 
 	std::string mName;
 	Mesh mMesh;
-	glm::mat4 mTransform{ 1.0f };
+	Transform mTransform;
 	VertexArray mVAO;
 	Shader& mShader;
 

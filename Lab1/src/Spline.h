@@ -1,7 +1,5 @@
 #pragma once
 
-#include <glm/glm.hpp>
-
 #include <vector>
 
 #include "VertexBuffer.h"
@@ -9,6 +7,7 @@
 #include "VertexArray.h"
 #include "Drawable.h"
 #include "Mesh.h"
+#include "Transform.h"
 
 class CubicBSpline : public Drawable
 {
@@ -22,14 +21,14 @@ public:
 	void FillSplinePoints(const std::vector<glm::vec3>& controlPoints, const unsigned int& sampleRate);
 
 	void Draw() const;
-	const glm::mat4& GetTransform() const;
+	Transform& GetTransform();
 
 private:
 
 	VertexArray mVArray;
 	VertexBuffer mVBuffer;
 	IndexBuffer mIBuffer;
-	glm::mat4 mTransform{ 1.0f };
+	Transform mTransform;
 	std::vector<glm::vec3> mControlPoints;
 	std::vector<Vertex> mSplinePoints;
 	int mNumOfSegments;

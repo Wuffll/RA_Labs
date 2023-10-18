@@ -9,7 +9,7 @@ TimeControl::TimeControl()
 void TimeControl::Start()
 {
 	mStarted = true;
-	mStart = mClock.now();
+	mStart = Clock::now();
 }
 
 double TimeControl::End()
@@ -17,7 +17,7 @@ double TimeControl::End()
 	if (!mStarted)
 		return 0.0;
 
-	mEnd = mClock.now();
+	mEnd = Clock::now();
 
 	return DurationInSeconds();
 }

@@ -10,7 +10,7 @@
 
 Mesh::Mesh(const std::string& filePath)
     :
-    mTransformMatrix(glm::mat4(1.0f)),
+    mTransformMatrix(),
     mBoundingBox(std::vector<MinMax>(3)),
     mFilePath(filePath)
 {
@@ -55,10 +55,10 @@ Mesh::Mesh(const std::string& filePath)
 
         double M = std::max<double>(mBoundingBox[0].max - mBoundingBox[0].min, std::max<double>(mBoundingBox[1].max - mBoundingBox[1].min, mBoundingBox[2].max - mBoundingBox[2].min));
 
-        mTransformMatrix = glm::translate(mTransformMatrix, glm::vec3(center[0], center[1], center[2]));
-
         double scaleVal = 2.0l / M;
-        mTransformMatrix = glm::scale(mTransformMatrix, glm::vec3(scaleVal, scaleVal, scaleVal));
+        mTransformMatrix.Scale(glm::vec3(scaleVal, scaleVal, scaleVal));
+
+        mTransformMatrix.Translation(glm::vec3(center[0], center[1], center[2]));
 
         // std::cout << "Processing indices..." << std::endl;
         for (int i = 0; i < mesh->mNumFaces; i++)
@@ -88,7 +88,7 @@ const IndexBuffer& Mesh::GetIB() const
     return mIBO;
 }
 
-const glm::mat4& Mesh::GetTransform() const
+const Transform& Mesh::GetTransform() const
 {
     return mTransformMatrix;
 }
