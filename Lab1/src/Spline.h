@@ -2,6 +2,8 @@
 
 #include <vector>
 
+#include <glm/glm.hpp>
+
 #include "VertexBuffer.h"
 #include "IndexBuffer.h"
 #include "VertexArray.h"
@@ -17,6 +19,7 @@ public:
 	~CubicBSpline();
 
 	const std::vector<Vertex>& GetSplinePoints() const;
+	const std::vector<glm::mat4>& GetRotationMatrices() const;
 
 	void FillSplinePoints(std::vector<glm::vec3>& controlPoints, const unsigned int& sampleRate);
 
@@ -31,6 +34,10 @@ private:
 	Transform mTransform;
 	std::vector<glm::vec3> mControlPoints;
 	std::vector<Vertex> mSplinePoints;
+	std::vector<Vertex> mTangents;
+	std::vector<Vertex> mNormals;
+	std::vector<Vertex> mBinormals;
+	std::vector<glm::mat4> mRotationMatrices;
 	int mNumOfSegments;
 	unsigned int mSampleRate;
 

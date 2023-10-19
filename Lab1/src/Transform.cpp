@@ -56,6 +56,13 @@ void Transform::SetOrientation(const glm::vec3& orientation)
 	mOrientation = endOrientation;
 }
 
+void Transform::SetOrientation(const glm::mat4& rotationMatrix)
+{
+	mRotation = rotationMatrix;
+
+	printf("Matrix set orientation used!\n");
+}
+
 // not sure if this actually works; gotta test
 void Transform::ResetScale()
 {

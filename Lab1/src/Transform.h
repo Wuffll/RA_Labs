@@ -17,6 +17,7 @@ public:
 
 	void SetPosition(const glm::vec3& pos);
 	void SetOrientation(const glm::vec3& orientation);
+	void SetOrientation(const glm::mat4& rotationMatrix);
 
 	void ResetScale();
 

@@ -32,8 +32,8 @@
 #define SHADER_PATH "D:\\Programming\\repos\\RA_Labs\\Lab1\\Shaders"
 #define MODELS_PATH "D:\\Programming\\repos\\RA_Labs\\Lab1\\Models\\"
 
-#define WINDOW_WIDTH 800
-#define WINDOW_HEIGHT 600
+#define WINDOW_WIDTH 1600
+#define WINDOW_HEIGHT 900
 
 GLFWwindow* InitWindow();
 
@@ -43,7 +43,7 @@ int main(void)
 
     Shader shader(std::string(SHADER_PATH).append("\\general.glsl"));
 
-    std::vector<glm::vec3> controlPoints{ {-5.0f, -5.0f, 0.0f}, {5.0f, -5.0f, 0.0f}, {5.0f, 5.0f, 0.0f}, {-5.0f, 5.0f, 0.0f} };// , { -5.0f, 5.0f, 0.0f }};
+    std::vector<glm::vec3> controlPoints{ {-5.0f, -5.0f, 1.0f}, {5.0f, -5.0f, 0.0f}, {5.0f, 5.0f, -1.0f}, {-5.0f, 5.0f, 0.0f} };
     CubicBSpline spline(controlPoints, 500);
 
     VertexBuffer splineBuffer(spline.GetSplinePoints().data(), spline.GetSplinePoints().size() * sizeof(Vertex), GL_STATIC_DRAW);
@@ -69,9 +69,9 @@ int main(void)
     renderer.AddDrawableObject(spline);
 
     Transform view;
-    view.Translation(glm::vec3(0.0f, 0.0f, -15.0f));
+    view.Translation(glm::vec3(0.0f, 0.0f, -13.0f));
 
-    // view = glm::rotate(view, glm::radians(75.0f), glm::vec3(1.0, 0.0, 0.0));
+    // view.Rotate({ 0.0f, 50.0f, 0.0f });
 
     Transform projection(glm::perspective(45.0f, 1.0f, 0.1f, 1000.0f));
 
@@ -79,14 +79,14 @@ int main(void)
     shader.SetUniformMatrix4f("projection", projection.GetMatrix());
     shader.SetUniformMatrix4f("view", view.GetMatrix());
 
-    obj.GetTransform().Rotate({ 90.0f, 0.0f, 0.0f });
-
     FpsManager fpsManager(60);
     TimeControl timer;
     timer.Start();
     float deltaTime = 0.0f;
 
     int i = 0;
+
+    auto& rotations = spline.GetRotationMatrices();
     /* Loop until the user closes the window */
     while (!glfwWindowShouldClose(window))
     {
@@ -105,12 +105,14 @@ int main(void)
             deltaTime = 0.0f;
         }
 
-        i += 2;
+        i += 1;
 
         if (i >= spline.GetSplinePoints().size())
             i = 0;
 
         obj.GetTransform().SetPosition(spline.GetSplinePoints()[i].pos);
+        obj.GetTransform().SetOrientation(rotations[i]);
+        // obj.GetTransform().Rotate({ 0.0f, 180.0f, 0.0f });
 
         auto& transform = obj.GetTransform();
         std::cout << "Position = " << Debug::GlmString(transform.GetPosition()).c_str() << "; Rotation = " << Debug::GlmString(transform.GetOrientation()) << std::endl;
