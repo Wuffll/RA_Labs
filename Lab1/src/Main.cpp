@@ -5,6 +5,7 @@
 #include <GLFW/glfw3.h>
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
+#include <glm/gtx/string_cast.hpp>
 
 #include <assimp/Importer.hpp>
 #include <assimp/scene.h>
@@ -25,6 +26,7 @@
 
 #include "FpsManager.h"
 #include "OpenGLDebugMessageCallback.h"
+#include "Debug.h"
 
 // change directory to yours
 #define SHADER_PATH "D:\\Programming\\repos\\RA_Labs\\Lab1\\Shaders"
@@ -41,8 +43,8 @@ int main(void)
 
     Shader shader(std::string(SHADER_PATH).append("\\general.glsl"));
 
-    std::vector<glm::vec3> controlPoints{ {0.0f, 2.5f, 0.0f}, {5.0f, 2.5f, 0.0f}, {5.0f, -2.5f, 0.0f}, {0.0f, -2.5f, 0.0f} };
-    CubicBSpline spline(controlPoints, 1000);
+    std::vector<glm::vec3> controlPoints{ {-5.0f, -5.0f, 0.0f}, {5.0f, -5.0f, 0.0f}, {5.0f, 5.0f, 0.0f}, {-5.0f, 5.0f, 0.0f} };// , { -5.0f, 5.0f, 0.0f }};
+    CubicBSpline spline(controlPoints, 500);
 
     VertexBuffer splineBuffer(spline.GetSplinePoints().data(), spline.GetSplinePoints().size() * sizeof(Vertex), GL_STATIC_DRAW);
 
@@ -67,7 +69,7 @@ int main(void)
     renderer.AddDrawableObject(spline);
 
     Transform view;
-    view.Translation(glm::vec3(0.0f, 0.0f, -10.0f));
+    view.Translation(glm::vec3(0.0f, 0.0f, -15.0f));
 
     // view = glm::rotate(view, glm::radians(75.0f), glm::vec3(1.0, 0.0, 0.0));
 
@@ -76,6 +78,8 @@ int main(void)
     shader.Bind();
     shader.SetUniformMatrix4f("projection", projection.GetMatrix());
     shader.SetUniformMatrix4f("view", view.GetMatrix());
+
+    obj.GetTransform().Rotate({ 90.0f, 0.0f, 0.0f });
 
     FpsManager fpsManager(60);
     TimeControl timer;
@@ -107,6 +111,9 @@ int main(void)
             i = 0;
 
         obj.GetTransform().SetPosition(spline.GetSplinePoints()[i].pos);
+
+        auto& transform = obj.GetTransform();
+        std::cout << "Position = " << Debug::GlmString(transform.GetPosition()).c_str() << "; Rotation = " << Debug::GlmString(transform.GetOrientation()) << std::endl;
 
         renderer.Draw();
 

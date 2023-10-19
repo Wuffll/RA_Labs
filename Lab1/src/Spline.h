@@ -13,12 +13,12 @@ class CubicBSpline : public Drawable
 {
 public:
 
-	CubicBSpline(const std::vector<glm::vec3>& controlPoints, const unsigned int& sampleRate = 1000);
+	CubicBSpline(std::vector<glm::vec3>& controlPoints, const unsigned int& sampleRate = 1000);
 	~CubicBSpline();
 
 	const std::vector<Vertex>& GetSplinePoints() const;
 
-	void FillSplinePoints(const std::vector<glm::vec3>& controlPoints, const unsigned int& sampleRate);
+	void FillSplinePoints(std::vector<glm::vec3>& controlPoints, const unsigned int& sampleRate);
 
 	void Draw() const;
 	Transform& GetTransform();

@@ -11,6 +11,10 @@ public:
 
 	~Transform();
 
+	const glm::vec3& GetPosition() const;
+	const glm::vec3& GetOrientation() const;
+	const glm::vec3& GetScale() const;
+
 	void SetPosition(const glm::vec3& pos);
 	void SetOrientation(const glm::vec3& orientation);
 
@@ -20,13 +24,20 @@ public:
 	void Rotate(const glm::vec3& rotation);
 	void Scale(const glm::vec3& scale);
 
-	const glm::mat4& GetMatrix() const;
+	const glm::mat4& GetMatrix();
 
 private:
 
 	glm::mat4 mMatrix{ 1.0f };
+	bool mHasTransformed = false;
+
 	glm::vec3 mPosition{ 0.0f };
+	glm::mat4 mTranslation{ 1.0f };
+
 	glm::vec3 mOrientation{ 0.0f };
+	glm::mat4 mRotation{ 1.0f };
+
 	glm::vec3 mScale{ 1.0f };
+	glm::mat4 mScaling{ 1.0f };
 
 };

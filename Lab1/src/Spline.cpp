@@ -2,7 +2,7 @@
 
 #include "Debug.h"
 
-CubicBSpline::CubicBSpline(const std::vector<glm::vec3>& controlPoints, const unsigned int& sampleRate)
+CubicBSpline::CubicBSpline(std::vector<glm::vec3>& controlPoints, const unsigned int& sampleRate)
 	:
 	mControlPoints(controlPoints),
 	mSampleRate(sampleRate),
@@ -20,12 +20,19 @@ const std::vector<Vertex>& CubicBSpline::GetSplinePoints() const
 	return mSplinePoints;
 }
 
-void CubicBSpline::FillSplinePoints(const std::vector<glm::vec3>& controlPoints, const unsigned int& sampleRate)
+void CubicBSpline::FillSplinePoints(std::vector<glm::vec3>& controlPoints, const unsigned int& sampleRate)
 {
 	mSplinePoints.reserve(sampleRate);
-	
+
 	if (controlPoints.size() < 4)
 		Debug::ThrowException("Must have at least 4 control points! (current size = " + std::to_string(controlPoints.size()) + ")");
+
+	/*
+	for (auto& point : controlPoints)
+	{
+		point.y *= -1;
+	}
+	*/
 
 	std::vector<unsigned int> indices;
 	indices.reserve(1000);
@@ -69,7 +76,8 @@ void CubicBSpline::Draw() const
 	mVArray.Bind();
 	mIBuffer.Bind(); // i thought that VAO stored state about the index buffer ???
 
-	glDrawElements(GL_LINE_STRIP, mSampleRate, GL_UNSIGNED_INT, nullptr);
+	glDrawElements(GL_LINE_STRIP, mSplinePoints.size(), GL_UNSIGNED_INT, nullptr);
+	// glDrawArrays(GL_LINE_STRIP, 0, mSplinePoints.size());
 }
 
 Transform& CubicBSpline::GetTransform()
