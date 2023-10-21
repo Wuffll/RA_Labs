@@ -6,6 +6,6 @@ class Drawable
 {
 public:
 
-	virtual void Draw() const = 0;
+	virtual void Draw() = 0;
 	virtual Transform& GetTransform() = 0;
 };

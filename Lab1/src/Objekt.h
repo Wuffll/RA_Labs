@@ -17,7 +17,7 @@ public:
 	Objekt(const std::string& name, const std::string& filePath, Shader& shader);
 	~Objekt();
 
-	void Draw() const;
+	void Draw();
 
 	Transform& GetTransform();
 

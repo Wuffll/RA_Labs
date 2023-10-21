@@ -17,7 +17,7 @@ Objekt::~Objekt()
 {
 }
 
-void Objekt::Draw() const
+void Objekt::Draw()
 {
 	mShader.Bind();
 	mVAO.Bind();

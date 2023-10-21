@@ -58,6 +58,8 @@ void Transform::SetOrientation(const glm::vec3& orientation)
 
 void Transform::SetOrientation(const glm::mat4& rotationMatrix)
 {
+	mHasTransformed = true;
+
 	mRotation = rotationMatrix;
 
 	printf("Matrix set orientation used!\n");
@@ -110,6 +112,8 @@ const glm::mat4& Transform::GetMatrix()
 		return mMatrix;
 
 	mMatrix = mTranslation * mRotation * mScaling;
+
+	mHasTransformed = false;
 
 	return mMatrix;
 }

@@ -32,8 +32,8 @@
 #define SHADER_PATH "D:\\Programming\\repos\\RA_Labs\\Lab1\\Shaders"
 #define MODELS_PATH "D:\\Programming\\repos\\RA_Labs\\Lab1\\Models\\"
 
-#define WINDOW_WIDTH 1600
-#define WINDOW_HEIGHT 900
+#define WINDOW_WIDTH 800
+#define WINDOW_HEIGHT 600
 
 GLFWwindow* InitWindow();
 
@@ -43,25 +43,13 @@ int main(void)
 
     Shader shader(std::string(SHADER_PATH).append("\\general.glsl"));
 
-    std::vector<glm::vec3> controlPoints{ {-5.0f, -5.0f, 1.0f}, {5.0f, -5.0f, 0.0f}, {5.0f, 5.0f, -1.0f}, {-5.0f, 5.0f, 0.0f} };
-    CubicBSpline spline(controlPoints, 500);
+    std::vector<glm::vec3> controlPoints{ {-5.0f, -5.0f, 1.0f}, {5.0f, -20.0f, 0.0f}, {30.0f, 5.0f, -30.0f}, {-5.0f, 20.0f, 0.0f}, {-20.0f, 2.0f, -10.0f }, {-30.0f, 8.0f, -6.0f}, {10.0f, 10.0f, 0.0f} };
+    CubicBSpline spline(controlPoints, 1000);
 
     VertexBuffer splineBuffer(spline.GetSplinePoints().data(), spline.GetSplinePoints().size() * sizeof(Vertex), GL_STATIC_DRAW);
 
-    Mesh mesh(std::string(MODELS_PATH).append("airplane_f16.obj"));
-
     Objekt obj("FirstObject", std::string(MODELS_PATH).append("airplane_f16.obj"), shader);
-    
-    /*
-    VertexArray vArray2;
-    vArray2.Bind();
-    splineBuffer.Bind();
-    glEnableVertexAttribArray(0);
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), nullptr);
-
-    glEnableVertexAttribArray(1);
-    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)(sizeof(float) * 3));
-    */
+    // Objekt obj("FirstObject", std::string(MODELS_PATH).append("galleon.obj"), shader);
     
     Renderer renderer(shader);
 
@@ -69,7 +57,6 @@ int main(void)
     renderer.AddDrawableObject(spline);
 
     Transform view;
-    view.Translation(glm::vec3(0.0f, 0.0f, -13.0f));
 
     // view.Rotate({ 0.0f, 50.0f, 0.0f });
 
@@ -98,21 +85,17 @@ int main(void)
         // !!! Check if uniform are being set properly
         deltaTime += timer.End();
         // view.Rotate((float)timer.End() * glm::vec3(0.0f, 90.0f, 0.0f));
+        view.SetPosition(glm::vec3(0.0f, 0.0f, -5.0f) - spline.GetSplinePoints()[i].pos);
         shader.SetUniformMatrix4f("view", view.GetMatrix());
-
-        if (deltaTime - 4.0f >= 0.000002f)
-        {
-            deltaTime = 0.0f;
-        }
 
         i += 1;
 
-        if (i >= spline.GetSplinePoints().size())
+        if (i >= spline.GetRotationMatrices().size())
             i = 0;
 
         obj.GetTransform().SetPosition(spline.GetSplinePoints()[i].pos);
         obj.GetTransform().SetOrientation(rotations[i]);
-        // obj.GetTransform().Rotate({ 0.0f, 180.0f, 0.0f });
+        obj.GetTransform().Rotate({ 0.0f, 90.0f, 0.0f });
 
         auto& transform = obj.GetTransform();
         std::cout << "Position = " << Debug::GlmString(transform.GetPosition()).c_str() << "; Rotation = " << Debug::GlmString(transform.GetOrientation()) << std::endl;

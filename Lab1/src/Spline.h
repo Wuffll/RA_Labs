@@ -23,13 +23,15 @@ public:
 
 	void FillSplinePoints(std::vector<glm::vec3>& controlPoints, const unsigned int& sampleRate);
 
-	void Draw() const;
+	void Draw();
 	Transform& GetTransform();
 
 private:
 
+	int mActive = 0;
 	VertexArray mVArray;
 	VertexBuffer mVBuffer;
+	VertexBuffer mVBufferGuides;
 	IndexBuffer mIBuffer;
 	Transform mTransform;
 	std::vector<glm::vec3> mControlPoints;
@@ -37,6 +39,7 @@ private:
 	std::vector<Vertex> mTangents;
 	std::vector<Vertex> mNormals;
 	std::vector<Vertex> mBinormals;
+	std::vector<Vertex> mCurrentGuides;
 	std::vector<glm::mat4> mRotationMatrices;
 	int mNumOfSegments;
 	unsigned int mSampleRate;

@@ -27,11 +27,12 @@ const std::vector<glm::mat4>& CubicBSpline::GetRotationMatrices() const
 
 void CubicBSpline::FillSplinePoints(std::vector<glm::vec3>& controlPoints, const unsigned int& sampleRate)
 {
-	mSplinePoints.reserve(sampleRate);
+	mSplinePoints.reserve(sampleRate + 6);
 	mTangents.reserve(sampleRate);
 	mNormals.reserve(sampleRate);
 	mBinormals.reserve(sampleRate);
 	mRotationMatrices.reserve(sampleRate);
+	mCurrentGuides.reserve(6);
 
 	if (controlPoints.size() < 4)
 		Debug::ThrowException("Must have at least 4 control points! (current size = " + std::to_string(controlPoints.size()) + ")");
@@ -49,7 +50,7 @@ void CubicBSpline::FillSplinePoints(std::vector<glm::vec3>& controlPoints, const
 	int numPointsPerSegment = sampleRate / mNumOfSegments;
 	float delta = 1.0f / (numPointsPerSegment - 1);
 
-	glm::mat4 rotationMatrix(1.0f);
+	glm::mat3 rotationMatrix(1.0f);
 
 	int l = 0;
 	for (int i = 1; i <= controlPoints.size() - 3; i++)
@@ -77,14 +78,13 @@ void CubicBSpline::FillSplinePoints(std::vector<glm::vec3>& controlPoints, const
 			mSplinePoints.push_back({ opResult, {1.0f, 1.0f, 1.0f} });
 
 			mTangents.push_back({glm::normalize(tangResult), {1.0f, 0.0f, 0.0f}});
-			mNormals.push_back({ glm::cross(glm::normalize(tang2Result), mTangents.back().pos), {0.0f, 1.0f, 0.0f} });
-			mBinormals.push_back({ glm::cross(mNormals.back().pos, mTangents.back().pos), {0.0f, 0.0f, 1.0f} });
+			mNormals.push_back({ glm::normalize(glm::cross(mTangents.back().pos, (tang2Result))), {0.0f, 1.0f, 0.0f} });
+			mBinormals.push_back({ glm::normalize(glm::cross(mNormals.back().pos, mTangents.back().pos)), {0.0f, 0.0f, 1.0f} });
 
-			rotationMatrix[0] = glm::vec4(mTangents.back().pos, 0.0f);
-			rotationMatrix[1] = glm::vec4(mNormals.back().pos, 0.0f);
-			rotationMatrix[2] = glm::vec4(mBinormals.back().pos, 0.0f);
 
-			rotationMatrix = glm::inverse(rotationMatrix);
+			rotationMatrix = glm::mat3{ mTangents.back().pos, mNormals.back().pos, mBinormals.back().pos };
+
+			// rotationMatrix = glm::inverse(rotationMatrix);
 
 			mRotationMatrices.push_back(rotationMatrix);
 
@@ -93,6 +93,15 @@ void CubicBSpline::FillSplinePoints(std::vector<glm::vec3>& controlPoints, const
 			l++;
 		}
 	}
+
+	mSplinePoints.push_back(mSplinePoints[0]);
+	mSplinePoints.push_back(mSplinePoints[0] + mTangents[0]);
+	mSplinePoints.push_back(mSplinePoints[0]);
+	mSplinePoints.push_back(mSplinePoints[0] + mNormals[0]);
+	mSplinePoints.push_back(mSplinePoints[0]);
+	mSplinePoints.push_back(mSplinePoints[0] + mBinormals[0]);
+
+	mActive++;
 
 	mVArray.Bind();
 
@@ -106,13 +115,32 @@ void CubicBSpline::FillSplinePoints(std::vector<glm::vec3>& controlPoints, const
 	mVArray.AddBuffer(mVBuffer, mIBuffer, layout);
 }
 
-void CubicBSpline::Draw() const
+void CubicBSpline::Draw()
 {
 	mVArray.Bind();
 	mIBuffer.Bind(); // i thought that VAO stored state about the index buffer ???
 
-	glDrawElements(GL_LINE_STRIP, mSplinePoints.size(), GL_UNSIGNED_INT, nullptr);
+	glDrawElements(GL_LINE_STRIP, mSplinePoints.size() - 6, GL_UNSIGNED_INT, nullptr);
+	
+	glLineWidth(3.0f);
+	glDrawArrays(GL_LINES, mSplinePoints.size() - 6, 6);
+	glLineWidth(1.0f);
+
 	// glDrawArrays(GL_LINE_STRIP, 0, mSplinePoints.size());
+	auto size = mSplinePoints.size();
+	mSplinePoints[size - 6] = (mSplinePoints[mActive]);
+	mSplinePoints[size - 5] = (mSplinePoints[mActive] + mTangents[mActive]);
+	mSplinePoints[size - 4] = (mSplinePoints[mActive]);
+	mSplinePoints[size - 3] = (mSplinePoints[mActive] + mNormals[mActive]);
+	mSplinePoints[size - 2] = (mSplinePoints[mActive]);
+	mSplinePoints[size - 1] = (mSplinePoints[mActive] + mBinormals[mActive]);
+
+	mActive++;
+
+	if (mActive >= mTangents.size())
+		mActive = 0;
+
+	mVBuffer.FillBuffer(mSplinePoints.data(), mSplinePoints.size() * sizeof(Vertex), GL_DYNAMIC_DRAW);
 }
 
 Transform& CubicBSpline::GetTransform()
