@@ -37,15 +37,8 @@ void CubicBSpline::FillSplinePoints(std::vector<glm::vec3>& controlPoints, const
 	if (controlPoints.size() < 4)
 		Debug::ThrowException("Must have at least 4 control points! (current size = " + std::to_string(controlPoints.size()) + ")");
 
-	/*
-	for (auto& point : controlPoints)
-	{
-		point.y *= -1;
-	}
-	*/
-
 	std::vector<unsigned int> indices;
-	indices.reserve(1000);
+	indices.reserve(sampleRate);
 
 	int numPointsPerSegment = sampleRate / mNumOfSegments;
 	float delta = 1.0f / (numPointsPerSegment - 1);
@@ -71,35 +64,35 @@ void CubicBSpline::FillSplinePoints(std::vector<glm::vec3>& controlPoints, const
 			T = {j*j*j, j*j, j, 1.0f};
 			T2 = { j*j, j, 1.0f };
 			T3 = { j, 1.0f };
-			opResult = { R * B * (T * (1.0f / 6.0f)) };
-			tangResult = { R * B2 * (T2 * (1.0f / 2.0f)) };
-			tang2Result = { R * B3 * T3 };
+
+			opResult = { R * B * (T * (1.0f / 6.0f)) }; // spline points
+			tangResult = { R * B2 * (T2 * (1.0f / 2.0f)) }; // first derivative
+			tang2Result = { R * B3 * T3 }; // second derivative
 
 			mSplinePoints.push_back({ opResult, {1.0f, 1.0f, 1.0f} });
 
-			mTangents.push_back({glm::normalize(tangResult), {1.0f, 0.0f, 0.0f}});
-			mNormals.push_back({ glm::normalize(glm::cross(mTangents.back().pos, (tang2Result))), {0.0f, 1.0f, 0.0f} });
-			mBinormals.push_back({ glm::normalize(glm::cross(mNormals.back().pos, mTangents.back().pos)), {0.0f, 0.0f, 1.0f} });
+			mTangents.push_back({glm::normalize(tangResult), {1.0f, -1.0f, -1.0f}});
+			mNormals.push_back({ glm::normalize(glm::cross(mTangents.back().pos, (tang2Result))), {-1.0f, 1.0f, -1.0f} });
+			mBinormals.push_back({ glm::normalize(glm::cross(mNormals.back().pos, mTangents.back().pos)), {-1.0f, -1.0f, 1.0f} });
 
 
-			rotationMatrix = glm::mat3{ mTangents.back().pos, mNormals.back().pos, mBinormals.back().pos };
+			rotationMatrix = { mBinormals.back().pos, mNormals.back().pos, mTangents.back().pos };
 
 			// rotationMatrix = glm::inverse(rotationMatrix);
 
 			mRotationMatrices.push_back(rotationMatrix);
 
 			indices.push_back(l);
-			// std::cout << mSplinePoints[mSplinePoints.size() - 1].pos.x << ", " << mSplinePoints[mSplinePoints.size() - 1].pos.y << ", " << mSplinePoints[mSplinePoints.size() - 1].pos.z << std::endl;
 			l++;
 		}
 	}
 
 	mSplinePoints.push_back(mSplinePoints[0]);
-	mSplinePoints.push_back(mSplinePoints[0] + mTangents[0]);
+	mSplinePoints.push_back(mSplinePoints[0].AddPosition(mTangents[0]));
 	mSplinePoints.push_back(mSplinePoints[0]);
-	mSplinePoints.push_back(mSplinePoints[0] + mNormals[0]);
+	mSplinePoints.push_back(mSplinePoints[0].AddPosition(mNormals[0]));
 	mSplinePoints.push_back(mSplinePoints[0]);
-	mSplinePoints.push_back(mSplinePoints[0] + mBinormals[0]);
+	mSplinePoints.push_back(mSplinePoints[0].AddPosition(mBinormals[0]));
 
 	mActive++;
 
@@ -126,14 +119,13 @@ void CubicBSpline::Draw()
 	glDrawArrays(GL_LINES, mSplinePoints.size() - 6, 6);
 	glLineWidth(1.0f);
 
-	// glDrawArrays(GL_LINE_STRIP, 0, mSplinePoints.size());
 	auto size = mSplinePoints.size();
 	mSplinePoints[size - 6] = (mSplinePoints[mActive]);
-	mSplinePoints[size - 5] = (mSplinePoints[mActive] + mTangents[mActive]);
+	mSplinePoints[size - 5] = (mSplinePoints[mActive].AddPosition(mTangents[mActive]));
 	mSplinePoints[size - 4] = (mSplinePoints[mActive]);
-	mSplinePoints[size - 3] = (mSplinePoints[mActive] + mNormals[mActive]);
+	mSplinePoints[size - 3] = (mSplinePoints[mActive].AddPosition(mNormals[mActive]));
 	mSplinePoints[size - 2] = (mSplinePoints[mActive]);
-	mSplinePoints[size - 1] = (mSplinePoints[mActive] + mBinormals[mActive]);
+	mSplinePoints[size - 1] = (mSplinePoints[mActive].AddPosition(mBinormals[mActive]));
 
 	mActive++;
 
@@ -143,7 +135,22 @@ void CubicBSpline::Draw()
 	mVBuffer.FillBuffer(mSplinePoints.data(), mSplinePoints.size() * sizeof(Vertex), GL_DYNAMIC_DRAW);
 }
 
+const bool& CubicBSpline::IsActive() const
+{
+	return mBoolActive;
+}
+
+void CubicBSpline::SetActive(const bool& value)
+{
+	mBoolActive = value;
+}
+
 Transform& CubicBSpline::GetTransform()
 {
 	return mTransform;
+}
+
+const std::vector<Vertex>& CubicBSpline::GetTangents() const
+{
+	return mTangents;
 }

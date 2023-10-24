@@ -25,6 +25,21 @@ void Objekt::Draw()
 	glDrawElements(GL_TRIANGLES, mMesh.GetIB().GetIndicesCount(), GL_UNSIGNED_INT, nullptr);
 }
 
+const bool& Objekt::IsActive() const
+{
+	return mActive;
+}
+
+void Objekt::SetActive(const bool& value)
+{
+	mActive = value;
+}
+
+void Objekt::ToggleActive(Objekt& obj)
+{
+	obj.mActive = !obj.mActive;
+}
+
 Transform& Objekt::GetTransform()
 {
 	return mTransform;

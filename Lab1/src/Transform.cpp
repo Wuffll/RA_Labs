@@ -56,6 +56,15 @@ void Transform::SetOrientation(const glm::vec3& orientation)
 	mOrientation = endOrientation;
 }
 
+void Transform::SetOrientation(const glm::vec3& axis, const float& angle)
+{
+	mHasTransformed = true;
+
+	mRotation = glm::mat4(1.0f);
+
+	mRotation = glm::rotate(mRotation, angle, axis);
+}
+
 void Transform::SetOrientation(const glm::mat4& rotationMatrix)
 {
 	mHasTransformed = true;

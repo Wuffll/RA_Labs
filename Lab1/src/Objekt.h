@@ -19,11 +19,16 @@ public:
 
 	void Draw();
 
+	const bool& IsActive() const;
+	virtual void SetActive(const bool& value);
+	static void ToggleActive(Objekt& obj);
+
 	Transform& GetTransform();
 
 private:
 
 	std::string mName;
+	bool mActive = true;
 	Mesh mMesh;
 	Transform mTransform;
 	VertexArray mVAO;

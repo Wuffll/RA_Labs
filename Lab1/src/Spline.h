@@ -24,10 +24,15 @@ public:
 	void FillSplinePoints(std::vector<glm::vec3>& controlPoints, const unsigned int& sampleRate);
 
 	void Draw();
+	virtual const bool& IsActive() const;
+	virtual void SetActive(const bool& value);
+
 	Transform& GetTransform();
+	const std::vector<Vertex>& GetTangents() const;
 
 private:
 
+	bool mBoolActive = true;
 	int mActive = 0;
 	VertexArray mVArray;
 	VertexBuffer mVBuffer;

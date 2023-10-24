@@ -26,11 +26,14 @@
 
 #include "FpsManager.h"
 #include "OpenGLDebugMessageCallback.h"
+#include "GLFWKeyPressedCallbacks.h"
+#include "Parser.h"
 #include "Debug.h"
 
 // change directory to yours
-#define SHADER_PATH "D:\\Programming\\repos\\RA_Labs\\Lab1\\Shaders"
+#define SHADER_PATH "D:\\Programming\\repos\\RA_Labs\\Lab1\\Shaders\\"
 #define MODELS_PATH "D:\\Programming\\repos\\RA_Labs\\Lab1\\Models\\"
+#define SPLINE_PATH "D:\\Programming\\repos\\RA_Labs\\Debug\\"
 
 #define WINDOW_WIDTH 800
 #define WINDOW_HEIGHT 600
@@ -41,15 +44,18 @@ int main(void)
 {
     GLFWwindow* window = InitWindow();
 
-    Shader shader(std::string(SHADER_PATH).append("\\general.glsl"));
+    Shader shader(std::string(SHADER_PATH).append("general.glsl"));
 
-    std::vector<glm::vec3> controlPoints{ {-5.0f, -5.0f, 1.0f}, {5.0f, -20.0f, 0.0f}, {30.0f, 5.0f, -30.0f}, {-5.0f, 20.0f, 0.0f}, {-20.0f, 2.0f, -10.0f }, {-30.0f, 8.0f, -6.0f}, {10.0f, 10.0f, 0.0f} };
-    CubicBSpline spline(controlPoints, 1000);
+    std::vector<glm::vec3> controlPoints{};
+    Parser::ReadFile(std::string(SPLINE_PATH).append("spiral.txt"), controlPoints);
+
+    CubicBSpline spline(controlPoints, 2000);
 
     VertexBuffer splineBuffer(spline.GetSplinePoints().data(), spline.GetSplinePoints().size() * sizeof(Vertex), GL_STATIC_DRAW);
 
-    Objekt obj("FirstObject", std::string(MODELS_PATH).append("airplane_f16.obj"), shader);
-    // Objekt obj("FirstObject", std::string(MODELS_PATH).append("galleon.obj"), shader);
+    Objekt obj("FirstObject", std::string(MODELS_PATH).append("airplane_f16_1.obj"), shader);
+    // Objekt obj("FirstObject", std::string(MODELS_PATH).append("galleon1.obj"), shader);
+    // Objekt obj("FirstObject", std::string(MODELS_PATH).append("tetrahedron_1.obj"), shader);
     
     Renderer renderer(shader);
 
@@ -66,14 +72,24 @@ int main(void)
     shader.SetUniformMatrix4f("projection", projection.GetMatrix());
     shader.SetUniformMatrix4f("view", view.GetMatrix());
 
-    FpsManager fpsManager(60);
+    FpsManager fpsManager(120);
     TimeControl timer;
     timer.Start();
     float deltaTime = 0.0f;
 
     int i = 0;
 
+    auto& points = spline.GetSplinePoints();
+    auto& tangents = spline.GetTangents();
     auto& rotations = spline.GetRotationMatrices();
+
+    float angle;
+    glm::vec3 axis;
+    glm::vec3 zVec = { 0.0f, 0.0f, 1.0f };
+    float mult;
+
+    float timeBetweenPoints = 0.016f; // in seconds
+
     /* Loop until the user closes the window */
     while (!glfwWindowShouldClose(window))
     {
@@ -82,23 +98,43 @@ int main(void)
         /* Render here */
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-        // !!! Check if uniform are being set properly
+        obj.SetActive(toggleModel);
+
+        // Time passed
         deltaTime += timer.End();
-        // view.Rotate((float)timer.End() * glm::vec3(0.0f, 90.0f, 0.0f));
-        view.SetPosition(glm::vec3(0.0f, 0.0f, -5.0f) - spline.GetSplinePoints()[i].pos);
+
+        // Camera
+        view.SetPosition(glm::vec3(0.0f, 0.0f, -5.0f) - points[i].pos);
         shader.SetUniformMatrix4f("view", view.GetMatrix());
 
-        i += 1;
+        i++;
 
         if (i >= spline.GetRotationMatrices().size())
             i = 0;
 
         obj.GetTransform().SetPosition(spline.GetSplinePoints()[i].pos);
-        obj.GetTransform().SetOrientation(rotations[i]);
-        obj.GetTransform().Rotate({ 0.0f, 90.0f, 0.0f });
 
-        auto& transform = obj.GetTransform();
-        std::cout << "Position = " << Debug::GlmString(transform.GetPosition()).c_str() << "; Rotation = " << Debug::GlmString(transform.GetOrientation()) << std::endl;
+        if (toggleRotation)
+        {
+            axis = glm::cross(zVec, tangents[i].pos);
+
+            mult = zVec.x * tangents[i].pos.x + zVec.y * tangents[i].pos.y + zVec.z * tangents[i].pos.z; // component-wise vector multiplication
+            angle = acos(mult / (glm::length(zVec) * glm::length(glm::normalize(tangents[i].pos))));
+
+            obj.GetTransform().SetOrientation(axis, angle);
+        }
+        else
+        {
+            obj.GetTransform().SetOrientation(rotations[i]);
+        }
+
+        // obj.GetTransform().Rotate({ 0.0f, 0.0f, 180.0f }); // upside down model when going towards screen
+ 
+        // Debugging
+        {
+            auto& transform = obj.GetTransform();
+            std::cout << "Position = " << Debug::GlmString(transform.GetPosition()).c_str() << "; Rotation = " << Debug::GlmString(transform.GetOrientation()) << std::endl;
+        }
 
         renderer.Draw();
 
@@ -156,6 +192,8 @@ GLFWwindow* InitWindow()
 
     glEnable(GL_DEBUG_OUTPUT);
     glDebugMessageCallback(MessageCallback, NULL);
+
+    glfwSetKeyCallback(window, key_callback);
 
     glEnable(GL_DEPTH_TEST);
 

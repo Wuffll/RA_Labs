@@ -7,8 +7,11 @@ struct Vertex
 	glm::vec3 pos;
 	glm::vec3 normal;
 
-	Vertex operator+(const Vertex& rhs)
+	// Gets average of normals
+	Vertex AddPosition(const Vertex& other)
 	{
-		return Vertex{this->pos + rhs.pos, rhs.normal};
+		glm::vec3 newPos = pos + other.pos;
+		glm::vec3 newNormal = (normal + other.normal) / 2.0f;
+		return {newPos, newNormal};
 	}
 };

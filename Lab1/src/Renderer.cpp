@@ -12,8 +12,11 @@ void Renderer::Draw() const
 
 	for (const auto& obj : mDrawableObjects)
 	{
-		mShader.SetUniformMatrix4f("model", obj->GetTransform().GetMatrix());
-		obj->Draw();
+		if (obj->IsActive())
+		{
+			mShader.SetUniformMatrix4f("model", obj->GetTransform().GetMatrix());
+			obj->Draw();
+		}
 	}
 }
 
