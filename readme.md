@@ -2,9 +2,8 @@
 
 ## Requirements
 
-OpenGL 4.5
-
-MS Visual Studio 2022
+- OpenGL 4.5
+- MS Visual Studio 2022
 
 ## Troubleshooting problems
 There are several things to keep in mind when the program doesn't want to execute or throws an exception.
