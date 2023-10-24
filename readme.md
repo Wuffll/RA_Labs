@@ -3,6 +3,7 @@
 ## Requirements
 
 OpenGL 4.5
+
 MS Visual Studio 2022
 
 ## Troubleshooting problems
