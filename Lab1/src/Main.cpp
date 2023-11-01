@@ -20,9 +20,10 @@
 #include "Renderer.h"
 #include "Mesh.h"
 #include "Objekt.h"
-#include "Spline.h"
-
 #include "Transform.h"
+
+#include "Spline.h"
+#include "Camera.h"
 
 #include "FpsManager.h"
 #include "OpenGLDebugMessageCallback.h"
@@ -51,8 +52,6 @@ int main(void)
 
     CubicBSpline spline(controlPoints, 2000);
 
-    VertexBuffer splineBuffer(spline.GetSplinePoints().data(), spline.GetSplinePoints().size() * sizeof(Vertex), GL_STATIC_DRAW);
-
     Objekt obj("FirstObject", std::string(MODELS_PATH).append("airplane_f16_1.obj"), shader);
     // Objekt obj("FirstObject", std::string(MODELS_PATH).append("galleon1.obj"), shader);
     // Objekt obj("FirstObject", std::string(MODELS_PATH).append("tetrahedron_1.obj"), shader);
@@ -62,15 +61,13 @@ int main(void)
     renderer.AddDrawableObject(obj);
     renderer.AddDrawableObject(spline);
 
-    Transform view;
-
-    // view.Rotate({ 0.0f, 50.0f, 0.0f });
+    Camera camera;
+    camera.SetShader("view", &shader);
 
     Transform projection(glm::perspective(45.0f, 1.0f, 0.1f, 1000.0f));
 
     shader.Bind();
     shader.SetUniformMatrix4f("projection", projection.GetMatrix());
-    shader.SetUniformMatrix4f("view", view.GetMatrix());
 
     FpsManager fpsManager(120);
     TimeControl timer;
@@ -104,8 +101,7 @@ int main(void)
         deltaTime += timer.End();
 
         // Camera
-        view.SetPosition(glm::vec3(0.0f, 0.0f, -5.0f) - points[i].pos);
-        shader.SetUniformMatrix4f("view", view.GetMatrix());
+        camera.SetPosition(glm::vec3(0.0f, 0.0f, -5.0f) - points[i].pos);
 
         i++;
 

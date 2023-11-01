@@ -1,9 +1,9 @@
 #include "Objekt.h"
 
-Objekt::Objekt(const std::string& name, const std::string& filePath, Shader& shader)
+Objekt::Objekt(const std::string& name, const std::string& meshFilePath, Shader& shader)
 	:
 	mName(name),
-	mMesh(filePath),
+	mMesh(meshFilePath),
 	mShader(shader),
 	mTransform(mMesh.GetTransform())
 {

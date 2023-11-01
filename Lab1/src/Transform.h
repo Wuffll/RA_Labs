@@ -2,6 +2,17 @@
 
 #include <glm/gtc/matrix_transform.hpp>
 
+// To be implemented
+enum RotationOrder
+{
+	XYZ,
+	XZY,
+	YXZ,
+	YZX,
+	ZXY,
+	ZYX
+};
+
 class Transform
 {
 public:
@@ -36,6 +47,8 @@ private:
 	glm::vec3 mPosition{ 0.0f };
 	glm::mat4 mTranslation{ 1.0f };
 
+
+	RotationOrder mRotationOrder = RotationOrder::XYZ;
 	glm::vec3 mOrientation{ 0.0f };
 	glm::mat4 mRotation{ 1.0f };
 

@@ -14,7 +14,7 @@ class Objekt : public Drawable
 {
 public:
 
-	Objekt(const std::string& name, const std::string& filePath, Shader& shader);
+	Objekt(const std::string& name, const std::string& meshFilePath, Shader& shader);
 	~Objekt();
 
 	void Draw();

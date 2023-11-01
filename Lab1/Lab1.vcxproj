@@ -143,9 +143,11 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="src\Camera.cpp" />
     <ClCompile Include="src\Debug.cpp" />
     <ClCompile Include="src\FpsManager.cpp" />
     <ClCompile Include="src\IndexBuffer.cpp" />
+    <ClCompile Include="src\Line.cpp" />
     <ClCompile Include="src\Main.cpp" />
     <ClCompile Include="src\Mesh.cpp" />
     <ClCompile Include="src\Objekt.cpp" />
@@ -161,11 +163,13 @@
     <ClCompile Include="src\VertexBufferLayout.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="src\Camera.h" />
     <ClInclude Include="src\Debug.h" />
     <ClInclude Include="src\Drawable.h" />
     <ClInclude Include="src\FpsManager.h" />
     <ClInclude Include="src\GLFWKeyPressedCallbacks.h" />
     <ClInclude Include="src\IndexBuffer.h" />
+    <ClInclude Include="src\Line.h" />
     <ClInclude Include="src\Mesh.h" />
     <ClInclude Include="src\Objekt.h" />
     <ClInclude Include="src\OpenGLDebugMessageCallback.h" />
