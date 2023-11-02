@@ -88,6 +88,16 @@ const IndexBuffer& Mesh::GetIB() const
     return mIBO;
 }
 
+const std::vector<Vertex> Mesh::GetVertices() const
+{
+    return mVertices;
+}
+
+const std::vector<unsigned int> Mesh::GetIndices() const
+{
+    return mIndices;
+}
+
 const Transform& Mesh::GetTransform() const
 {
     return mTransformMatrix;

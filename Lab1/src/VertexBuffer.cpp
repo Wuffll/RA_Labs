@@ -7,6 +7,8 @@
 VertexBuffer::VertexBuffer()
 {
 	glGenBuffers(1, &mRendererID);
+
+	Debug::Print("VertexBuffer created without any data! (mRendererID = " + STRING(mRendererID) + ")");
 }
 
 VertexBuffer::VertexBuffer(const void* data, const unsigned int& size, unsigned int usage)
@@ -33,6 +35,11 @@ void VertexBuffer::FillBuffer(const void* data, const unsigned int& size, unsign
 	mInitialized = true;
 }
 
+const bool& VertexBuffer::IsInitialized() const
+{
+	return mInitialized;
+}
+
 const unsigned int& VertexBuffer::GetRendererID() const
 {
 	return mRendererID;
@@ -42,7 +49,7 @@ void VertexBuffer::Bind() const
 {
 	if (!mInitialized)
 	{
-		Debug::ThrowException("Vertex buffer " + std::to_string(mRendererID) + " is uninitialized! (mInitialized = false)");
+		Debug::Print("Vertex buffer " + std::to_string(mRendererID) + " is uninitialized! (mInitialized = false)");
 	}
 
 	glBindBuffer(GL_ARRAY_BUFFER, mRendererID);

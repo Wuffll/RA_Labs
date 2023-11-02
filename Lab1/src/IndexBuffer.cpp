@@ -11,6 +11,8 @@ IndexBuffer::IndexBuffer()
 	mCount(0)
 {
 	glGenBuffers(1, &mRendererID);
+
+	Debug::Print("IndexBuffer created without any data! (mRendererID = " + STRING(mRendererID) + ")");
 }
 
 IndexBuffer::IndexBuffer(const void* data, const unsigned int& count, const unsigned int& usage)

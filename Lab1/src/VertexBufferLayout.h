@@ -21,6 +21,11 @@ struct VertexBufferElement
 
 		return 0;
 	}
+
+	bool operator==(const VertexBufferElement& rhs)
+	{
+		return type == rhs.type && count == rhs.count && normalized == rhs.normalized;
+	}
 };
 
 class VertexBufferLayout
@@ -31,6 +36,21 @@ public:
 
 	const std::vector<VertexBufferElement>& GetElements() const;
 	const unsigned int& GetStride() const;
+
+	bool operator==(const VertexBufferLayout& rhs)
+	{
+		size_t size = mElements.size();
+		if (size != rhs.mElements.size())
+			return false;
+
+		for (int i = 0; i < size; i++)
+		{
+			if (mElements[i] != rhs.mElements[i])
+				return false;
+		}
+
+		return true;
+	}
 
 	template<typename T>
 	void Push(const unsigned int& count)

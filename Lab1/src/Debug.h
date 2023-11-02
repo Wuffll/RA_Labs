@@ -5,6 +5,8 @@
 #include <iostream>
 #include <string>
 
+#define STRING(value) (std::to_string(value))
+
 class Debug
 {
 public:

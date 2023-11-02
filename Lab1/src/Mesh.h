@@ -24,6 +24,9 @@ public:
 	const VertexBuffer& GetVB() const;
 	const IndexBuffer& GetIB() const;
 
+	const std::vector<Vertex> GetVertices() const;
+	const std::vector<unsigned int> GetIndices() const;
+
 	const Transform& GetTransform() const;
 	
 private:
