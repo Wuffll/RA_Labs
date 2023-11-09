@@ -10,16 +10,28 @@ public:
 
 	void FillBuffer(const void* data, const unsigned int& size, unsigned int usage);
 
+	void InsertDataWithOffset(const void* data, const unsigned int& size, const unsigned int& offset);
+
+	void AdjustBufferSize(const unsigned int& newSize, const unsigned int& usage);
+
 	const bool& IsInitialized() const;
 
 	const unsigned int& GetRendererID() const;
+	const unsigned int& GetBufferCapacity() const;
+	const unsigned int& GetBufferSize() const;
 
 	void Bind() const;
+	void Bind(const unsigned int& bindingIndex) const;
 	void Unbind() const;
 
 private:
 
+	static unsigned int boundVBO;
+
 	bool mInitialized = false;
 	unsigned int mRendererID = 0;
+	unsigned int mUsage;
 
+	unsigned int mBufferCapacity = 0; // (filled memory + reserved memory); in bytes
+	unsigned int mBufferSize = 0; // (filled memory); in bytes
 };

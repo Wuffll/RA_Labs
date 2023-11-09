@@ -6,6 +6,7 @@
 #include <string>
 
 #define STRING(value) (std::to_string(value))
+#define GLM_TOSTRING(value) (glm::to_string(value))
 
 class Debug
 {

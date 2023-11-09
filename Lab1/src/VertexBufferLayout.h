@@ -14,6 +14,8 @@ struct VertexBufferElement
 	{
 		switch (type)
 		{
+			case GL_DOUBLE:				return sizeof(double);
+			case GL_INT:				return sizeof(int);
 			case GL_FLOAT:				return sizeof(float);
 			case GL_UNSIGNED_INT:		return sizeof(unsigned int);
 			case GL_UNSIGNED_BYTE:		return sizeof(unsigned char);
