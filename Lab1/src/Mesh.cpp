@@ -35,7 +35,7 @@ Mesh::Mesh(const std::string& filePath)
 
         // std::cout << "Processing vertices...(" << mesh->mNumVertices << ")" << std::endl;
 
-        for (int i = 0; i < mesh->mNumVertices; i++)
+        for (unsigned int i = 0; i < mesh->mNumVertices; i++)
         {
             mVertices.push_back({ {mesh->mVertices[i].x, mesh->mVertices[i].y, mesh->mVertices[i].z}, {mesh->mNormals[i].x, mesh->mNormals[i].y, mesh->mNormals[i].z}});
             // std::cout << mesh->mNormals[i].x << " || " << mesh->mNormals[i].y << " || " << mesh->mNormals[i].z << std::endl;
@@ -61,9 +61,9 @@ Mesh::Mesh(const std::string& filePath)
         mTransformMatrix.Translation(glm::vec3(center[0], center[1], center[2]));
 
         // std::cout << "Processing indices..." << std::endl;
-        for (int i = 0; i < mesh->mNumFaces; i++)
+        for (unsigned int i = 0; i < mesh->mNumFaces; i++)
         {
-            for (int j = 0; j < mesh->mFaces[i].mNumIndices; j++)
+            for (unsigned int j = 0; j < mesh->mFaces[i].mNumIndices; j++)
             {
                 mIndices.push_back(mesh->mFaces[i].mIndices[j]);
             }

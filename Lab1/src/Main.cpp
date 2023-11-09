@@ -74,7 +74,7 @@ int main(void)
     timer.Start();
     float deltaTime = 0.0f;
 
-    int i = 0;
+    size_t i = 0;
 
     auto& points = spline.GetSplinePoints();
     auto& tangents = spline.GetTangents();
@@ -98,7 +98,7 @@ int main(void)
         obj.SetActive(toggleModel);
 
         // Time passed
-        deltaTime += timer.End();
+        deltaTime += (float)timer.End();
 
         // Camera
         camera.SetPosition(glm::vec3(0.0f, 0.0f, -5.0f) - points[i].pos);

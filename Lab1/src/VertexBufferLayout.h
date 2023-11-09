@@ -45,7 +45,7 @@ public:
 		if (size != rhs.mElements.size())
 			return false;
 
-		for (int i = 0; i < size; i++)
+		for (size_t i = 0; i < size; i++)
 		{
 			if (mElements[i] != rhs.mElements[i])
 				return false;

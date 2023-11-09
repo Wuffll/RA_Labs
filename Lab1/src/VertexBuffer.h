@@ -9,8 +9,8 @@ public:
 	~VertexBuffer();
 
 	void FillBuffer(const void* data, const unsigned int& size, unsigned int usage);
-
 	void InsertDataWithOffset(const void* data, const unsigned int& size, const unsigned int& offset);
+	unsigned int AppendData(const void* data, const unsigned int& size);
 
 	void AdjustBufferSize(const unsigned int& newSize, const unsigned int& usage);
 

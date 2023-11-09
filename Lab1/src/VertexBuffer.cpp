@@ -31,10 +31,17 @@ VertexBuffer::VertexBuffer(const void* data, const unsigned int& size, unsigned 
 
 VertexBuffer::~VertexBuffer()
 {
-	Debug::Print("Vertex buffer " + std::to_string(mRendererID) + " destroyed!");
+	Debug::Print("Vertex buffer " + STRING(mRendererID) + " destroyed!");
 	glDeleteBuffers(1, &mRendererID);
 }
 
+/// <summary>
+/// 
+/// </summary>
+/// <param name="data">Pointer to data being transfered</param>
+/// <param name="size">Size of data being transfered; in bytes</param>
+/// <param name="usage">Buffer Usage Type</param>
+/// 
 void VertexBuffer::FillBuffer(const void* data, const unsigned int& size, unsigned int usage)
 {
 	if (usage != mUsage)
@@ -42,13 +49,18 @@ void VertexBuffer::FillBuffer(const void* data, const unsigned int& size, unsign
 
 	AdjustBufferSize(size, usage);
 
-	Bind();
-	glBufferSubData(GL_ARRAY_BUFFER, 0, size, data);
+	InsertDataWithOffset(data, size, 0);
 
-	mBufferSize = size;
 	mInitialized = true;
 }
 
+/// <summary>
+/// 
+/// </summary>
+/// <param name="data">Pointer to data being inserted</param>
+/// <param name="size">Size of data; in bytes</param>
+/// <param name="offset">Offset; in bytes</param>
+/// 
 void VertexBuffer::InsertDataWithOffset(const void* data, const unsigned int& size, const unsigned int& offset)
 {
 	Bind();
@@ -59,9 +71,35 @@ void VertexBuffer::InsertDataWithOffset(const void* data, const unsigned int& si
 	mBufferSize = (offset + size > mBufferSize) ? offset + size : mBufferSize;
 }
 
+/// <summary>
+/// 
+/// </summary>
+/// <param name="data">Pointer to the data</param>
+/// <param name="size">Size of data; in bytes</param>
+/// <returns></returns>
+/// 
+unsigned int VertexBuffer::AppendData(const void* data, const unsigned int& size)
+{
+	auto offset = mBufferSize;
+
+	Bind();
+	glBufferSubData(GL_ARRAY_BUFFER, offset, size, data);
+
+	mBufferSize += size;
+
+	return offset;
+}
+
+/// <summary>
+/// 
+/// </summary>
+/// <param name="newSize">In bytes</param>
+/// <param name="usage">Buffer Usage Type</param>
+/// 
 void VertexBuffer::AdjustBufferSize(const unsigned int& newSize, const unsigned int& usage)
 {
 	bool sizeChanged = false;
+
 	if (mBufferCapacity == 0)
 	{
 		mBufferCapacity = INITIAL_BUFFER_SIZE;
@@ -116,11 +154,13 @@ void VertexBuffer::Bind() const
 {
 	if (!mInitialized)
 	{
-		Debug::Print("Vertex buffer " + std::to_string(mRendererID) + " is uninitialized! (mInitialized = false)");
+		Debug::Print("Vertex buffer " + STRING(mRendererID) + " is uninitialized! (mInitialized = false)");
 	}
 
+	/*
 	if (boundVBO == mRendererID)
 		return;
+	*/
 
 	glBindBuffer(GL_ARRAY_BUFFER, mRendererID);
 	boundVBO = mRendererID;

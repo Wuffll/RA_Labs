@@ -31,7 +31,7 @@ IndexBuffer::IndexBuffer(const void* data, const unsigned int& count, const unsi
 
 IndexBuffer::~IndexBuffer()
 {
-	Debug::Print("Index buffer " + std::to_string(mRendererID) + " destroyed!");
+	Debug::Print("Index buffer " + STRING(mRendererID) + " destroyed!");
 	glDeleteBuffers(1, &mRendererID);
 }
 
@@ -49,6 +49,13 @@ void IndexBuffer::FillBuffer(const void* data, const unsigned int& count, const 
 	}
 }
 
+/// <summary>
+/// 
+/// </summary>
+/// <param name="data">Pointer to data</param>
+/// <param name="count">Number of indices at the data pointer</param>
+/// <param name="offset">Offset from where to buffer data; in bytes</param>
+/// 
 void IndexBuffer::InsertDataWithOffset(const void* data, const unsigned int& count, const unsigned int& offset)
 {
 	size_t size = count * sizeof(unsigned int);
@@ -62,30 +69,28 @@ void IndexBuffer::InsertDataWithOffset(const void* data, const unsigned int& cou
 	mCount = ((offset / sizeof(unsigned int)) + count > mCount) ? (offset / sizeof(unsigned int)) + count : mCount;
 }
 
-void IndexBuffer::Bind() const
+unsigned int IndexBuffer::AppendData(const void* data, const unsigned int& count)
 {
-	if (mCount == 0)
-	{
-		Debug::Print("Index buffer " + std::to_string(mRendererID) + " is not initialized! (count = 0)");
-	}
+	auto offset = mBufferSize;
 
-	/*
-	if (mRendererID == boundIBO)
-		return;
-	*/
+	Bind();
+	glBufferSubData(GL_ELEMENT_ARRAY_BUFFER, offset, count * sizeof(unsigned int), data);
 
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mRendererID);
-	boundIBO = mRendererID;
+	mBufferSize += count * sizeof(unsigned int);
+
+	return offset;
 }
 
-void IndexBuffer::Unbind() const
-{
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
-}
-
+/// <summary>
+/// 
+/// </summary>
+/// <param name="newSize">In bytes</param>
+/// <param name="usage">Buffer usage type</param>
+/// 
 void IndexBuffer::AdjustBufferSize(const unsigned int& newSize, const unsigned int& usage)
 {
 	bool sizeChanged = false;
+
 	if (mBufferCapacity == 0)
 	{
 		mBufferCapacity = INITIAL_BUFFER_SIZE;
@@ -114,6 +119,27 @@ void IndexBuffer::AdjustBufferSize(const unsigned int& newSize, const unsigned i
 
 		delete data;
 	}
+}
+
+void IndexBuffer::Bind() const
+{
+	if (mCount == 0)
+	{
+		Debug::Print("Index buffer " + STRING(mRendererID) + " is not initialized! (count = 0)");
+	}
+
+	/*
+	if (mRendererID == boundIBO)
+		return;
+	*/
+
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mRendererID);
+	boundIBO = mRendererID;
+}
+
+void IndexBuffer::Unbind() const
+{
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 }
 
 const unsigned int& IndexBuffer::GetIndicesCount() const

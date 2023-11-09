@@ -35,7 +35,7 @@ void CubicBSpline::FillSplinePoints(std::vector<glm::vec3>& controlPoints, const
 	mCurrentGuides.reserve(6);
 
 	if (controlPoints.size() < 4)
-		Debug::ThrowException("Must have at least 4 control points! (current size = " + std::to_string(controlPoints.size()) + ")");
+		Debug::ThrowException("Must have at least 4 control points! (current size = " + STRING(controlPoints.size()) + ")");
 
 	std::vector<unsigned int> indices;
 	indices.reserve(sampleRate);
@@ -46,7 +46,7 @@ void CubicBSpline::FillSplinePoints(std::vector<glm::vec3>& controlPoints, const
 	glm::mat3 rotationMatrix(1.0f);
 
 	int l = 0;
-	for (int i = 1; i <= controlPoints.size() - 3; i++)
+	for (size_t i = 1; i <= controlPoints.size() - 3; i++)
 	{
 		glm::vec4 T{};
 		glm::vec3 T2{};
@@ -129,7 +129,7 @@ void CubicBSpline::Draw()
 
 	mActive++;
 
-	if (mActive >= mTangents.size())
+	if ((size_t)mActive >= mTangents.size())
 		mActive = 0;
 
 	mVBuffer.FillBuffer(mSplinePoints.data(), mSplinePoints.size() * sizeof(Vertex), GL_DYNAMIC_DRAW);
