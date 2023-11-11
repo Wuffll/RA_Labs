@@ -9,3 +9,8 @@ const unsigned int& VertexBufferLayout::GetStride() const
 {
     return mStride;
 }
+
+const bool VertexBufferLayout::IsInitialized() const
+{
+    return mElements.size() != 0;
+}

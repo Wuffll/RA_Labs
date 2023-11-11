@@ -10,7 +10,11 @@ Objekt::Objekt(const std::string& name, const std::string& meshFilePath, Shader&
 	VertexBufferLayout layout;
 	layout.Push<float>(3);
 	layout.Push<float>(3);
-	mVAO.AddBuffer(mMesh.GetVB(), mMesh.GetIB(), layout);
+
+	mVAO.SetLayout(layout, false);
+	mVAO.SetDrawingMode(GL_TRIANGLES);
+	mVAO.SetUsage(GL_STATIC_DRAW);
+	mVAO.AddBuffer(mMesh.GetVB(), mMesh.GetIB());
 }
 
 Objekt::~Objekt()
@@ -21,8 +25,10 @@ void Objekt::Draw()
 {
 	mShader.Bind();
 	mVAO.Bind();
+	mMesh.GetVB().Bind(0);
+	mMesh.GetIB().Bind();
 
-	glDrawElements(GL_TRIANGLES, mMesh.GetIB().GetIndicesCount(), GL_UNSIGNED_INT, nullptr);
+	glDrawElements(mVAO.GetDrawingMode(), mMesh.GetIB().GetIndicesCount(), GL_UNSIGNED_INT, nullptr);
 }
 
 const bool& Objekt::IsActive() const

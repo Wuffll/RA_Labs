@@ -39,6 +39,8 @@ public:
 	const std::vector<VertexBufferElement>& GetElements() const;
 	const unsigned int& GetStride() const;
 
+	const bool IsInitialized() const;
+
 	bool operator==(const VertexBufferLayout& rhs)
 	{
 		size_t size = mElements.size();

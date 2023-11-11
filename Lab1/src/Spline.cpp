@@ -98,22 +98,27 @@ void CubicBSpline::FillSplinePoints(std::vector<glm::vec3>& controlPoints, const
 
 	mVArray.Bind();
 
-	mVBuffer.FillBuffer(mSplinePoints.data(), mSplinePoints.size() * sizeof(Vertex), GL_STATIC_DRAW);
-	mIBuffer.FillBuffer(indices.data(), indices.size(), GL_STATIC_DRAW);
-
 	VertexBufferLayout layout;
 	layout.Push<float>(3);
 	layout.Push<float>(3);
 
-	mVArray.AddBuffer(mVBuffer, mIBuffer, layout);
+	mVArray.SetLayout(layout, false);
+	mVArray.SetDrawingMode(GL_LINE_STRIP);
+	mVArray.SetUsage(GL_STATIC_DRAW);
+
+	mVBuffer.FillBuffer(mSplinePoints.data(), mSplinePoints.size() * sizeof(Vertex), mVArray.GetUsage());
+	mIBuffer.FillBuffer(indices.data(), indices.size(), GL_STATIC_DRAW);
+
+	mVArray.AddBuffer(mVBuffer, mIBuffer);
 }
 
 void CubicBSpline::Draw()
 {
 	mVArray.Bind();
+	mVBuffer.Bind(0);
 	mIBuffer.Bind(); // i thought that VAO stored state about the index buffer ???
 
-	glDrawElements(GL_LINE_STRIP, mSplinePoints.size() - 6, GL_UNSIGNED_INT, nullptr);
+	glDrawElements(mVArray.GetDrawingMode(), mSplinePoints.size() - 6, GL_UNSIGNED_INT, nullptr);
 	
 	glLineWidth(3.0f);
 	glDrawArrays(GL_LINES, mSplinePoints.size() - 6, 6);
@@ -132,7 +137,7 @@ void CubicBSpline::Draw()
 	if ((size_t)mActive >= mTangents.size())
 		mActive = 0;
 
-	mVBuffer.FillBuffer(mSplinePoints.data(), mSplinePoints.size() * sizeof(Vertex), GL_DYNAMIC_DRAW);
+	mVBuffer.FillBuffer(mSplinePoints.data(), mSplinePoints.size() * sizeof(Vertex), mVArray.GetUsage());
 }
 
 const bool& CubicBSpline::IsActive() const

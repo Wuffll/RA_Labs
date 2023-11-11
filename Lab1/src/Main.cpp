@@ -32,9 +32,9 @@
 #include "Debug.h"
 
 // change directory to yours
-#define SHADER_PATH "D:\\Programming\\repos\\RA_Labs\\Lab1\\Shaders\\"
-#define MODELS_PATH "D:\\Programming\\repos\\RA_Labs\\Lab1\\Models\\"
-#define SPLINE_PATH "D:\\Programming\\repos\\RA_Labs\\Debug\\"
+#define SHADER_PATH "C:\\Adam\\repos\\RA_Labs\\Lab1\\Shaders\\"
+#define MODELS_PATH "C:\\Adam\\repos\\RA_Labs\\Lab1\\Models\\"
+#define SPLINE_PATH "C:\\Adam\\repos\\RA_Labs\\Debug\\"
 
 #define WINDOW_WIDTH 800
 #define WINDOW_HEIGHT 600
