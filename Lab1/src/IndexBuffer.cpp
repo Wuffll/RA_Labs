@@ -151,3 +151,13 @@ const unsigned int& IndexBuffer::GetBufferSize() const
 {
 	return mBufferSize;
 }
+
+/// <summary>
+/// 
+/// </summary>
+/// <returns>Returns offset (in bytes) at which the free memory starts</returns>
+/// 
+const unsigned int& IndexBuffer::GetOffset() const
+{
+	return mBufferSize;
+}

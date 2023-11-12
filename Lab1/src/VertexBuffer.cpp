@@ -150,6 +150,16 @@ const unsigned int& VertexBuffer::GetBufferSize() const
 	return mBufferSize;
 }
 
+/// <summary>
+/// 
+/// </summary>
+/// <returns>Returns offset (in bytes) at which the free memory starts</returns>
+/// 
+const unsigned int& VertexBuffer::GetOffset() const
+{
+	return mBufferSize;
+}
+
 void VertexBuffer::Bind() const
 {
 	if (!mInitialized)

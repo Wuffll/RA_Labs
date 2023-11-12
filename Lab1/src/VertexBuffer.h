@@ -19,6 +19,7 @@ public:
 	const unsigned int& GetRendererID() const;
 	const unsigned int& GetBufferCapacity() const;
 	const unsigned int& GetBufferSize() const;
+	const unsigned int& GetOffset() const;
 
 	void Bind() const;
 	void Bind(const unsigned int& bindingIndex) const;

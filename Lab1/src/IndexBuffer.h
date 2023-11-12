@@ -19,6 +19,7 @@ public:
 
 	const unsigned int& GetIndicesCount() const;
 	const unsigned int& GetBufferSize() const;
+	const unsigned int& GetOffset() const;
 
 
 private:
