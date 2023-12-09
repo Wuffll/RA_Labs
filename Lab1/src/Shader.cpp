@@ -7,6 +7,8 @@
 #include <vector>
 #include <fstream>
 
+int Shader::activeShaderID = -1;
+
 Shader::Shader(const std::string& filePath)
 	:
 	mFilePath(filePath)
@@ -16,12 +18,18 @@ Shader::Shader(const std::string& filePath)
 
 void Shader::Bind() const
 {
-	glUseProgram(mRendererID);
+	if (activeShaderID != mRendererID)
+	{
+		glUseProgram(mRendererID);
+		activeShaderID = mRendererID;
+	}
 }
 
 void Shader::Unbind() const
 {
 	glUseProgram(0);
+
+	activeShaderID = -1;
 }
 
 void Shader::SetUniformMatrix4f(const std::string& name, const glm::mat4& matrix)

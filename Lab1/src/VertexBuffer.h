@@ -1,5 +1,7 @@
 #pragma once
 
+#include "VertexBufferLayout.h"
+
 class VertexBuffer
 {
 public:
@@ -22,7 +24,7 @@ public:
 	const unsigned int& GetOffset() const;
 
 	void Bind() const;
-	void Bind(const unsigned int& bindingIndex) const;
+	void Bind(const unsigned int& bindingIndex, const VertexBufferLayout& layout) const;
 	void Unbind() const;
 
 private:

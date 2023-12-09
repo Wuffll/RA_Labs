@@ -44,6 +44,8 @@ private:
 
 	int GetUniformLocation(const std::string& name);
 
+	static int activeShaderID;
+
 	unsigned int mRendererID = 0;
 	std::unordered_map<std::string, int> mUniformLocationCache{};
 	std::string mFilePath{};

@@ -29,6 +29,8 @@ void Camera::SetShader(const std::string& uniformName, Shader* shader)
 {
 	mShader = shader;
 	mShaderUniformName = uniformName;
+
+	UpdateShaderUniform();
 }
 
 Transform& Camera::GetView()
@@ -73,6 +75,8 @@ void Camera::ResetTransform()
 
 void Camera::UpdateShaderUniform()
 {
+	mShader->Bind();
+
 	if (mShader != nullptr)
 		mShader->SetUniformMatrix4f(mShaderUniformName, mView.GetMatrix());
 	else

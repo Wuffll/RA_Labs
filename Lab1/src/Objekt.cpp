@@ -25,7 +25,7 @@ void Objekt::Draw()
 {
 	mShader.Bind();
 	mVAO.Bind();
-	mMesh.GetVB().Bind(0);
+	mMesh.GetVB().Bind(0, mVAO.GetLayout());
 	mMesh.GetIB().Bind();
 
 	glDrawElements(mVAO.GetDrawingMode(), mMesh.GetIB().GetIndicesCount(), GL_UNSIGNED_INT, nullptr);

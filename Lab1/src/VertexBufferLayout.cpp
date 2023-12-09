@@ -1,5 +1,7 @@
 #include "VertexBufferLayout.h"
 
+#include "Debug.h"
+
 const std::vector<VertexBufferElement>& VertexBufferLayout::GetElements() const
 {
     return mElements;
@@ -7,6 +9,9 @@ const std::vector<VertexBufferElement>& VertexBufferLayout::GetElements() const
 
 const unsigned int& VertexBufferLayout::GetStride() const
 {
+    if (!IsInitialized())
+        Debug::ThrowException("VertexBufferLayout not initialized!");
+
     return mStride;
 }
 

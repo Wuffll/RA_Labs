@@ -57,6 +57,7 @@ void VertexArray::AddBuffer(const VertexBuffer& vb, const IndexBuffer& ib)
 
 	AssignVertexAttributes();
 
+	vb.Bind(0, mLayout);
 	ib.Bind();
 }
 

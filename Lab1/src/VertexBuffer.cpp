@@ -3,7 +3,6 @@
 #include <GL/glew.h>
 
 #include "Debug.h"
-#include "Vertex.h"
 
 #define INITIAL_BUFFER_SIZE 64 * 1024 * 1024 // 64 MB in bytes
 
@@ -176,9 +175,9 @@ void VertexBuffer::Bind() const
 	boundVBO = mRendererID;
 }
 
-void VertexBuffer::Bind(const unsigned int& bindingIndex) const
+void VertexBuffer::Bind(const unsigned int& bindingIndex, const VertexBufferLayout& layout) const
 {
-	glBindVertexBuffer(bindingIndex, mRendererID, 0, sizeof(Vertex));
+	glBindVertexBuffer(bindingIndex, mRendererID, 0, layout.GetStride());
 }
 
 void VertexBuffer::Unbind() const
