@@ -10,6 +10,7 @@ uniform mat4 model;
 uniform mat4 view;
 uniform mat4 projection;
 
+out vec3 vNormal;
 out vec3 vColor;
 out vec2 vTexCoord;
 
@@ -27,20 +28,17 @@ mat4 rotationMatrix(vec3 axis, float angle)
 }
 
 void main()
-{
-	vec3 fromTexToPlayer = aPosition - view[4].xyz; // view[4] == cameraPosition
-	vec3 normalVec = aPosition + aNormal;
-	
-	float angleBetween = dot(normalize(fromTexToPlayer), normalize(normalVec));
-	
+{	
 	gl_Position = projection * view * model * vec4(aPosition, 1.0f);
 	vColor = aColor;
 	vTexCoord = aTexCoord;
+	vNormal = aNormal;
 }
 
 #shader FRAG
 #version 450 core
 
+in vec3 vNormal;
 in vec3 vColor;
 in vec2 vTexCoord;
 
@@ -50,5 +48,6 @@ uniform sampler2D aTexture;
 
 void main()
 {
+	// color = vec4(vNormal, 1.0f);
 	color = texture(aTexture, vTexCoord);
 }

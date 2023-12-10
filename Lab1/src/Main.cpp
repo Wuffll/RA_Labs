@@ -59,12 +59,12 @@ int main(void)
 
     Camera camera;
     camera.SetShader("view", &shader);
-    camera.Move({ 0.0f, 0.0f, 0.0f });
+
+    mainPlayerCamera = &camera;
 
     Transform projection(glm::perspective(45.0f, 1.0f, 0.1f, 1000.0f));
     Transform entityModel;
-
-    entityModel.Translation({ 0.0f, 0.0, -2.0f });
+    entityModel.Translation({ 4.0f, 0.0f, -5.0f });
 
     shader.Bind();
     shader.SetUniformMatrix4f("projection", projection.GetMatrix());
@@ -90,7 +90,7 @@ int main(void)
 
     int width, height, nrChannels;
     std::string texturePath(TEXTURES_PATH);
-    texturePath.append("Fire\\fire1.png");
+    texturePath.append("Fire\\fire0.png");
 
     stbi_set_flip_vertically_on_load(1);
 
@@ -113,8 +113,15 @@ int main(void)
          1.0f,  1.0f, 0.0f,   1.0f, 0.0f, 0.0f,   1.0f, 1.0f,       0.0f, 0.0f, 1.0f,   // top right
          1.0f, -1.0f, 0.0f,   0.0f, 1.0f, 0.0f,   1.0f, 0.0f,       0.0f, 0.0f, 1.0f,   // bottom right
         -1.0f, -1.0f, 0.0f,   0.0f, 0.0f, 1.0f,   0.0f, 0.0f,       0.0f, 0.0f, 1.0f,   // bottom left
-        -1.0f,  1.0f, 0.0f,   1.0f, 1.0f, 0.0f,   0.0f, 1.0f,        0.0f, 0.0f, 1.0f    // top left 
+        -1.0f,  1.0f, 0.0f,   1.0f, 1.0f, 0.0f,   0.0f, 1.0f,       0.0f, 0.0f, 1.0f    // top left 
     };
+    glm::vec3 entityNormal = { 0.0f, 0.0f, 1.0f };
+    
+    glm::vec3 fromEntityToCamera = glm::normalize(camera.GetView().GetPosition() - entityModel.GetPosition());
+    glm::vec3 axis = glm::normalize(glm::cross(fromEntityToCamera, entityNormal));
+    float angle = acos(glm::dot(fromEntityToCamera, entityNormal));
+
+    glm::mat4 rotMatrix = glm::rotate(glm::mat4(1.0f), angle, axis);
 
     unsigned int indices[] = {
         0, 1, 2,
@@ -141,6 +148,8 @@ int main(void)
 
     float timeBetweenPoints = 0.016f; // in seconds
 
+    float sign = 1.0f;
+
     /* Loop until the user closes the window */
     while (!glfwWindowShouldClose(window))
     {
@@ -150,6 +159,9 @@ int main(void)
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
         // obj.SetActive(toggleModel);
+
+        shader.SetUniformMatrix4f("projection", projection.GetMatrix());
+        shader.SetUniformMatrix4f("model", entityModel.GetMatrix() * rotMatrix);
 
         glBindTexture(GL_TEXTURE_2D, texture);
 
@@ -185,7 +197,24 @@ int main(void)
             glfwPollEvents();
         } while (!fpsManager.TimeToGo()); // should eventually replace while loop with sleep
 
+        if (deltaTime < 10.0f)
+        {
+            entityModel.Translation({ 0.0f, 0.0f, sign * (float)timer.End() * 1.0f });
+        }
+        else
+        {
+            sign *= -1.0f;
+            deltaTime = 0.0f;
+        }
+
+
         // camera.Rotate((float)timer.End() * glm::vec3{ 0.0f, 15.0f, 0.0f });
+
+        fromEntityToCamera = glm::normalize(camera.GetView().GetPosition() - entityModel.GetPosition());
+        axis = glm::normalize(glm::cross(fromEntityToCamera, entityNormal));
+        angle = acos(glm::dot(fromEntityToCamera, entityNormal));
+
+        rotMatrix = glm::rotate(glm::mat4(1.0f), -angle, axis);
 
         std::cout << "FPS: " << fpsManager.GetCurrentFps() << std::endl;
     }
