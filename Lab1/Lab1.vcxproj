@@ -151,7 +151,9 @@
     <ClCompile Include="src\Main.cpp" />
     <ClCompile Include="src\Mesh.cpp" />
     <ClCompile Include="src\Objekt.cpp" />
+    <ClCompile Include="src\Panel.cpp" />
     <ClCompile Include="src\Parser.cpp" />
+    <ClCompile Include="src\ParticleContainer.cpp" />
     <ClCompile Include="src\Renderer.cpp" />
     <ClCompile Include="src\Shader.cpp" />
     <ClCompile Include="src\Spline.cpp" />
@@ -161,6 +163,7 @@
     <ClCompile Include="src\VertexBuffer.cpp" />
     <ClCompile Include="src\VertexBufferLayout.cpp" />
     <ClCompile Include="src\VertexBufferLayout.h" />
+    <ClCompile Include="src\Texture.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\Camera.h" />
@@ -173,7 +176,9 @@
     <ClInclude Include="src\Mesh.h" />
     <ClInclude Include="src\Objekt.h" />
     <ClInclude Include="src\OpenGLDebugMessageCallback.h" />
+    <ClInclude Include="src\Panel.h" />
     <ClInclude Include="src\Parser.h" />
+    <ClInclude Include="src\ParticleContainer.h" />
     <ClInclude Include="src\Renderer.h" />
     <ClInclude Include="src\Shader.h" />
     <ClInclude Include="src\Spline.h" />
@@ -182,6 +187,7 @@
     <ClInclude Include="src\Vertex.h" />
     <ClInclude Include="src\VertexArray.h" />
     <ClInclude Include="src\VertexBuffer.h" />
+    <ClInclude Include="src\Texture.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

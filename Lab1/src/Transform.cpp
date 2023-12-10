@@ -63,6 +63,8 @@ void Transform::SetOrientation(const glm::vec3& axis, const float& angle)
 	mRotation = glm::mat4(1.0f);
 
 	mRotation = glm::rotate(mRotation, angle, axis);
+
+	printf("Matrix set orientation used! (variable mOrientation incorrect/updated!)\n");
 }
 
 void Transform::SetOrientation(const glm::mat4& rotationMatrix)
@@ -71,7 +73,25 @@ void Transform::SetOrientation(const glm::mat4& rotationMatrix)
 
 	mRotation = rotationMatrix;
 
-	printf("Matrix set orientation used!\n");
+	printf("Matrix set orientation used!  (variable mOrientation incorrect/updated!)\n");
+}
+
+void Transform::SetScale(const glm::vec3& scale)
+{
+	mHasTransformed = true;
+
+	mScale = scale;
+	mScaling = glm::scale(glm::mat4(1.0f), scale);
+}
+
+void Transform::SetScaleUniformly(const float& scale)
+{
+	mHasTransformed = true;
+
+	glm::vec3 scaleVector{ scale, scale, scale };
+
+	mScale = scaleVector;
+	mScaling = glm::scale(glm::mat4(1.0f), scaleVector);
 }
 
 // not sure if this actually works; gotta test

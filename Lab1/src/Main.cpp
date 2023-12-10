@@ -11,8 +11,6 @@
 #include <assimp/scene.h>
 #include <assimp/postprocess.h>
 
-#define STB_IMAGE_IMPLEMENTATION
-#include "stb_image/stb_image.h"
 
 #include <iostream>
 
@@ -27,6 +25,9 @@
 
 #include "Spline.h"
 #include "Camera.h"
+#include "Texture.h"
+#include "Panel.h"
+#include "ParticleContainer.h"
 
 #include "FpsManager.h"
 #include "OpenGLDebugMessageCallback.h"
@@ -39,6 +40,7 @@
 #define MODELS_PATH "D:\\Programming\\repos\\RA_Labs\\Models\\"
 #define SPLINE_PATH "D:\\Programming\\repos\\RA_Labs\\Debug\\"
 #define TEXTURES_PATH "D:\\Programming\\repos\\RA_Labs\\Textures\\"
+#define FIRE_TEXTURES "D:\\Programming\\repos\\RA_Labs\\Textures\\Fire\\"
 
 #define WINDOW_WIDTH 800
 #define WINDOW_HEIGHT 600
@@ -63,12 +65,9 @@ int main(void)
     mainPlayerCamera = &camera;
 
     Transform projection(glm::perspective(45.0f, 1.0f, 0.1f, 1000.0f));
-    Transform entityModel;
-    entityModel.Translation({ 4.0f, 0.0f, -5.0f });
 
     shader.Bind();
     shader.SetUniformMatrix4f("projection", projection.GetMatrix());
-    shader.SetUniformMatrix4f("model", entityModel.GetMatrix());
 
     FpsManager fpsManager(120);
     TimeControl timer;
@@ -77,74 +76,27 @@ int main(void)
 
     // Loading image and setting texture
     
-    unsigned int texture;
-    glGenTextures(1, &texture);
-
-    glBindTexture(GL_TEXTURE_2D, texture);
-
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-
-    int width, height, nrChannels;
-    std::string texturePath(TEXTURES_PATH);
-    texturePath.append("Fire\\fire0.png");
-
-    stbi_set_flip_vertically_on_load(1);
-
-    unsigned char* data = stbi_load(texturePath.c_str(), &width, &height, &nrChannels, STBI_rgb_alpha);
-
-    if (data)
+    std::vector<Texture> fireTextures;
+    std::string textureName = "fire0.png";
+    for (int i = 0; i < 5; i++)
     {
-        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, data);
-        // glGenerateMipmap(GL_TEXTURE_2D);
-    }
-    else
-    {
-        Debug::ThrowException("Unable to load image data!");
+        textureName[4] = STRING(i).c_str()[0];
+        fireTextures.push_back(Texture(std::string(FIRE_TEXTURES).append(textureName)));
     }
 
-    stbi_image_free(data);
+    Panel panel(shader, fireTextures, camera);
 
-    float vertices[] = {
-        // positions          // colors           // texture coords // normals
-         1.0f,  1.0f, 0.0f,   1.0f, 0.0f, 0.0f,   1.0f, 1.0f,       0.0f, 0.0f, 1.0f,   // top right
-         1.0f, -1.0f, 0.0f,   0.0f, 1.0f, 0.0f,   1.0f, 0.0f,       0.0f, 0.0f, 1.0f,   // bottom right
-        -1.0f, -1.0f, 0.0f,   0.0f, 0.0f, 1.0f,   0.0f, 0.0f,       0.0f, 0.0f, 1.0f,   // bottom left
-        -1.0f,  1.0f, 0.0f,   1.0f, 1.0f, 0.0f,   0.0f, 1.0f,       0.0f, 0.0f, 1.0f    // top left 
-    };
+    ParticleContainer container(shader, fireTextures, camera, 5);
+
+    panel.GetTransform().Translation({ 4.0f, 0.0f, -5.0f });
+
     glm::vec3 entityNormal = { 0.0f, 0.0f, 1.0f };
     
-    glm::vec3 fromEntityToCamera = glm::normalize(camera.GetView().GetPosition() - entityModel.GetPosition());
+    glm::vec3 fromEntityToCamera = glm::normalize(camera.GetView().GetPosition() - panel.GetTransform().GetPosition());
     glm::vec3 axis = glm::normalize(glm::cross(fromEntityToCamera, entityNormal));
     float angle = acos(glm::dot(fromEntityToCamera, entityNormal));
 
     glm::mat4 rotMatrix = glm::rotate(glm::mat4(1.0f), angle, axis);
-
-    unsigned int indices[] = {
-        0, 1, 2,
-        2, 3, 0
-    };
-
-    VertexArray mVAO;
-    VertexBufferLayout layout;
-    layout.Push<float>(3);
-    layout.Push<float>(3);
-    layout.Push<float>(2);
-    layout.Push<float>(3);
-    mVAO.SetLayout(layout, false);
-    mVAO.SetDrawingMode(GL_TRIANGLES);
-    mVAO.SetUsage(GL_STATIC_DRAW);
-
-    VertexBuffer mVBO;
-    mVBO.FillBuffer(vertices, sizeof(vertices), GL_STATIC_DRAW);
-
-    IndexBuffer mIBO;
-    mIBO.FillBuffer(indices, sizeof(indices) / sizeof(unsigned int), GL_STATIC_DRAW);
-
-    mVAO.AddBuffer(mVBO, mIBO);
 
     float timeBetweenPoints = 0.016f; // in seconds
 
@@ -161,15 +113,9 @@ int main(void)
         // obj.SetActive(toggleModel);
 
         shader.SetUniformMatrix4f("projection", projection.GetMatrix());
-        shader.SetUniformMatrix4f("model", entityModel.GetMatrix() * rotMatrix);
 
-        glBindTexture(GL_TEXTURE_2D, texture);
-
-        // render container
-        shader.Bind();
-        mVAO.Bind();
-        glDrawElements(GL_TRIANGLES, mIBO.GetIndicesCount(), GL_UNSIGNED_INT, 0);
-        //glDrawElements(GL_TRIANGLES, mIBO.GetIndicesCount(), GL_UNSIGNED_INT, 0);
+        panel.Draw();
+        container.Draw();
 
         // Time passed
         deltaTime += (float)timer.End();
@@ -199,7 +145,7 @@ int main(void)
 
         if (deltaTime < 10.0f)
         {
-            entityModel.Translation({ 0.0f, 0.0f, sign * (float)timer.End() * 1.0f });
+            panel.GetTransform().Translation({0.0f, 0.0f, sign * (float)timer.End() * 1.0f});
         }
         else
         {
@@ -207,14 +153,14 @@ int main(void)
             deltaTime = 0.0f;
         }
 
-
-        // camera.Rotate((float)timer.End() * glm::vec3{ 0.0f, 15.0f, 0.0f });
-
-        fromEntityToCamera = glm::normalize(camera.GetView().GetPosition() - entityModel.GetPosition());
+        fromEntityToCamera = glm::normalize(camera.GetView().GetPosition() - panel.GetTransform().GetPosition());
         axis = glm::normalize(glm::cross(fromEntityToCamera, entityNormal));
         angle = acos(glm::dot(fromEntityToCamera, entityNormal));
 
-        rotMatrix = glm::rotate(glm::mat4(1.0f), -angle, axis);
+        panel.GetTransform().SetOrientation(axis, -angle);
+
+        container.Update(timer.End());
+        panel.Update(timer.End());
 
         std::cout << "FPS: " << fpsManager.GetCurrentFps() << std::endl;
     }
@@ -267,7 +213,7 @@ GLFWwindow* InitWindow()
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
-    glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+    glClearColor(0.15f, 0.0f, 0.3f, 1.0f);
 
     return window;
 }

@@ -30,6 +30,8 @@ public:
 	void SetOrientation(const glm::vec3& orientation);
 	void SetOrientation(const glm::vec3& axis, const float& angle);
 	void SetOrientation(const glm::mat4& rotationMatrix);
+	void SetScale(const glm::vec3& scale);
+	void SetScaleUniformly(const float& scale);
 
 	void ResetScale();
 
