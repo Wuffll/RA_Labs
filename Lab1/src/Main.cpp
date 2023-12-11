@@ -63,6 +63,7 @@ int main(void)
     camera.SetShader("view", &shader);
 
     mainPlayerCamera = &camera;
+    
 
     Transform projection(glm::perspective(45.0f, 1.0f, 0.1f, 1000.0f));
 
@@ -84,23 +85,13 @@ int main(void)
         fireTextures.push_back(Texture(std::string(FIRE_TEXTURES).append(textureName)));
     }
 
-    Panel panel(shader, fireTextures, camera);
+    ParticleContainer container(shader, fireTextures, camera, 5, {0.0f, 0.0f, -2.0f});
+    ParticleContainer container2(shader, fireTextures, camera, 6, { 3.5f, 0.0f, -1.0f });
 
-    ParticleContainer container(shader, fireTextures, camera, 5);
-
-    panel.GetTransform().Translation({ 4.0f, 0.0f, -5.0f });
-
-    glm::vec3 entityNormal = { 0.0f, 0.0f, 1.0f };
-    
-    glm::vec3 fromEntityToCamera = glm::normalize(camera.GetView().GetPosition() - panel.GetTransform().GetPosition());
-    glm::vec3 axis = glm::normalize(glm::cross(fromEntityToCamera, entityNormal));
-    float angle = acos(glm::dot(fromEntityToCamera, entityNormal));
-
-    glm::mat4 rotMatrix = glm::rotate(glm::mat4(1.0f), angle, axis);
+    containerPtr = &container;
+    containerPtr2 = &container2;
 
     float timeBetweenPoints = 0.016f; // in seconds
-
-    float sign = 1.0f;
 
     /* Loop until the user closes the window */
     while (!glfwWindowShouldClose(window))
@@ -114,8 +105,8 @@ int main(void)
 
         shader.SetUniformMatrix4f("projection", projection.GetMatrix());
 
-        panel.Draw();
         container.Draw();
+        container2.Draw();
 
         // Time passed
         deltaTime += (float)timer.End();
@@ -143,24 +134,8 @@ int main(void)
             glfwPollEvents();
         } while (!fpsManager.TimeToGo()); // should eventually replace while loop with sleep
 
-        if (deltaTime < 10.0f)
-        {
-            panel.GetTransform().Translation({0.0f, 0.0f, sign * (float)timer.End() * 1.0f});
-        }
-        else
-        {
-            sign *= -1.0f;
-            deltaTime = 0.0f;
-        }
-
-        fromEntityToCamera = glm::normalize(camera.GetView().GetPosition() - panel.GetTransform().GetPosition());
-        axis = glm::normalize(glm::cross(fromEntityToCamera, entityNormal));
-        angle = acos(glm::dot(fromEntityToCamera, entityNormal));
-
-        panel.GetTransform().SetOrientation(axis, -angle);
-
         container.Update(timer.End());
-        panel.Update(timer.End());
+        container2.Update(timer.End());
 
         std::cout << "FPS: " << fpsManager.GetCurrentFps() << std::endl;
     }

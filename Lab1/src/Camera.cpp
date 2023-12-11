@@ -35,6 +35,7 @@ void Camera::SetShader(const std::string& uniformName, Shader* shader)
 
 Transform& Camera::GetView()
 {
+	Debug::Print(GLM_TOSTRING(mView.GetPosition()));
 	return mView;
 }
 

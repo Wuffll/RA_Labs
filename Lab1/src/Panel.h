@@ -21,6 +21,8 @@ public:
 	void Update(float elapsedTime);
 	void Draw();
 
+	void SetLifeDuration(const float& newLifeDuration);
+
 	Transform& GetTransform();
 
 private:
@@ -38,6 +40,7 @@ private:
 	std::vector<unsigned int> mIndexData{};
 
 	Shader* mShader;
+	Camera* mCamera;
 	VertexArray mVAO;
 	VertexBuffer mVBO;
 	IndexBuffer mIBO;

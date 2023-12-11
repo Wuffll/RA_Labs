@@ -6,7 +6,8 @@
 Panel::Panel(Shader& shader, const std::vector<Texture>& textures, Camera& camera)
     :
     mShader(&shader),
-    mTextures(textures)
+    mTextures(textures),
+    mCamera(&camera)
 {
     float vertices[] = {
         // positions          // colors           // texture coords // normals
@@ -26,9 +27,11 @@ Panel::Panel(Shader& shader, const std::vector<Texture>& textures, Camera& camer
 
     mIndexData.insert(mIndexData.begin(), &indices[0], &indices[sizeof(unsigned int) / sizeof(float)]);
 
-    glm::vec3 fromEntityToCamera = glm::normalize(camera.GetView().GetPosition() - mTransform.GetPosition());
+    glm::vec3 fromEntityToCamera = glm::normalize(-camera.GetView().GetPosition() - mTransform.GetPosition());
     glm::vec3 axis = glm::normalize(glm::cross(fromEntityToCamera, entityNormal));
     float angle = acos(glm::dot(fromEntityToCamera, entityNormal));
+
+    mTransform.SetOrientation(axis, -angle);
 
     VertexBufferLayout layout;
     layout.Push<float>(3);
@@ -47,7 +50,7 @@ Panel::Panel(Shader& shader, const std::vector<Texture>& textures, Camera& camer
 
 bool Panel::IsDead() const
 {
-    return (mAliveTimer > mLifeDuration) ? true : false;
+    return (mAliveTimer >= mLifeDuration) ? true : false;
 }
 
 void Panel::Update(float elapsedTime)
@@ -67,6 +70,13 @@ void Panel::Update(float elapsedTime)
         mTimeElapsed = 0.0f;
 
     mActiveTexture = floor(mTimeElapsed / (mAnimationDuration / mTextures.size())); // goes through all textures in half a second
+
+
+    glm::vec3 fromEntityToCamera = glm::normalize(-mCamera->GetView().GetPosition() - mTransform.GetPosition());
+    glm::vec3 axis = glm::normalize(glm::cross(fromEntityToCamera, {0.0f, 0.0f, 1.0f}));
+    float angle = acos(glm::dot(fromEntityToCamera, {0.0f, 0.0f, 1.0f}));
+
+    mTransform.SetOrientation(axis, -angle);
 }
 
 void Panel::Draw()
@@ -81,6 +91,11 @@ void Panel::Draw()
     mIBO.Bind();
 
     glDrawElements(mVAO.GetDrawingMode(), mIBO.GetIndicesCount(), GL_UNSIGNED_INT, 0);
+}
+
+void Panel::SetLifeDuration(const float& newLifeDuration)
+{
+    mLifeDuration = newLifeDuration;
 }
 
 Transform& Panel::GetTransform()
