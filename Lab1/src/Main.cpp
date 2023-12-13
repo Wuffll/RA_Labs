@@ -85,7 +85,7 @@ int main(void)
         fireTextures.push_back(Texture(std::string(FIRE_TEXTURES).append(textureName)));
     }
 
-    ParticleContainer container(shader, fireTextures, camera, 5, {0.0f, 0.0f, -2.0f});
+    ParticleContainer container(shader, fireTextures, camera, 5, {0.0f, 0.0f, -2.5f});
     ParticleContainer container2(shader, fireTextures, camera, 6, { 3.5f, 0.0f, -1.0f });
 
     containerPtr = &container;

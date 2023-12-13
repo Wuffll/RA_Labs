@@ -11,6 +11,7 @@ public:
 	ParticleContainer(Shader& shader, const std::vector<Texture>& textures, Camera& camera, const unsigned int& count, const glm::vec3& sourcePosition);
 
 	void AddParticle();
+	void UpdateSourcePosition(const glm::vec3 newPosition);
 
 	void Update(const float& timeElapsed);
 	void Draw();

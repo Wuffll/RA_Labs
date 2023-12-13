@@ -36,6 +36,12 @@ void ParticleContainer::AddParticle()
 	mParticles[mParticles.size() - 1]->SetLifeDuration(rand() % 11 + 5.0f);
 }
 
+void ParticleContainer::UpdateSourcePosition(const glm::vec3 newPosition)
+{
+	mSourcePosition = newPosition;
+}
+
+
 
 
 void ParticleContainer::Update(const float& timeElapsed)
