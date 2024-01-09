@@ -1,11 +1,9 @@
 #include "VertexBuffer.h"
 
-#include <GL/glew.h>
-
 #include "Debug.h"
 #include "Vertex.h"
 
-#define INITIAL_BUFFER_SIZE 64 * 1024 * 1024 // 64 MB in bytes
+#define INITIAL_BUFFER_SIZE 16 * 1024 * 1024 // 16 MB in bytes
 
 unsigned int VertexBuffer::boundVBO = 0;
 
@@ -83,6 +81,8 @@ unsigned int VertexBuffer::AppendData(const void* data, const unsigned int& size
 	auto offset = mBufferSize;
 
 	Bind();
+	AdjustBufferSize(offset + size, mUsage);
+
 	glBufferSubData(GL_ARRAY_BUFFER, offset, size, data);
 
 	mBufferSize += size;
@@ -120,13 +120,14 @@ void VertexBuffer::AdjustBufferSize(const unsigned int& newSize, const unsigned 
 
 		if (mBufferSize != 0)
 		{
-			data = malloc(mBufferSize);
+			data = new char[mBufferSize];
 			glGetBufferSubData(GL_ARRAY_BUFFER, 0, mBufferSize, data);
 		}
 
 		glBufferData(GL_ARRAY_BUFFER, mBufferCapacity, data, usage);
 
-		delete data;
+		if (data)
+			delete data;
 	}
 }
 
@@ -174,11 +175,6 @@ void VertexBuffer::Bind() const
 
 	glBindBuffer(GL_ARRAY_BUFFER, mRendererID);
 	boundVBO = mRendererID;
-}
-
-void VertexBuffer::Bind(const unsigned int& bindingIndex) const
-{
-	glBindVertexBuffer(bindingIndex, mRendererID, 0, sizeof(Vertex));
 }
 
 void VertexBuffer::Unbind() const

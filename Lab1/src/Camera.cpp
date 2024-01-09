@@ -29,6 +29,8 @@ void Camera::SetShader(const std::string& uniformName, Shader* shader)
 {
 	mShader = shader;
 	mShaderUniformName = uniformName;
+
+	UpdateShaderUniform();
 }
 
 Transform& Camera::GetView()

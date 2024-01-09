@@ -2,6 +2,8 @@
 
 #include "Debug.h"
 
+unsigned int VertexArray::ActiveVAO = 0;
+
 VertexArray::VertexArray()
 	:
 	mUsage(GL_STATIC_DRAW),
@@ -55,6 +57,7 @@ void VertexArray::AddBuffer(const VertexBuffer& vb, const IndexBuffer& ib)
 
 	Bind();
 
+	// Don't forget to bind vb's to correct binding indices before drawing !!!
 	AssignVertexAttributes();
 
 	ib.Bind();
@@ -62,7 +65,13 @@ void VertexArray::AddBuffer(const VertexBuffer& vb, const IndexBuffer& ib)
 
 void VertexArray::Bind() const
 {
-	glBindVertexArray(mRendererID);
+	if (mRendererID == 0)
+		Debug::ThrowException("ERROR: VertexArray not initialized !!!");
+
+	if(mRendererID != ActiveVAO)
+		glBindVertexArray(mRendererID);
+
+	ActiveVAO = mRendererID;
 }
 
 void VertexArray::Unbind() const
@@ -82,7 +91,7 @@ void VertexArray::AssignVertexAttributes()
 
 		glEnableVertexAttribArray(i);
 		// glVertexAttribPointer(i, e.count, e.type, e.normalized, mLayout.GetStride(), (void*)(offset));
-		glVertexAttribFormat(i, e.count, e.type, e.normalized, offset);
+		glVertexAttribFormat(i, e.count, e.type, e.normalized, (mLayoutBuffersSeperated) ? 0 : offset);
 		glVertexAttribBinding(i, bindingIndex);
 
 		if (mLayoutBuffersSeperated) 

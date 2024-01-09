@@ -143,6 +143,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="src\BufferManagementSystem.cpp" />
     <ClCompile Include="src\Camera.cpp" />
     <ClCompile Include="src\Debug.cpp" />
     <ClCompile Include="src\FpsManager.cpp" />
@@ -163,6 +164,7 @@
     <ClCompile Include="src\VertexBufferLayout.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="src\BufferManagementSystem.h" />
     <ClInclude Include="src\Camera.h" />
     <ClInclude Include="src\Debug.h" />
     <ClInclude Include="src\Drawable.h" />

@@ -38,7 +38,7 @@ double TimeControl::DurationInSeconds() const
 		return 0.0;
 
 	double duration = ((std::chrono::duration_cast<std::chrono::nanoseconds>)(mEnd - mStart)).count() / 1000000000.0;
-	// Debug::Print("Duration = " + std::to_string(duration));
+	// Debug::Print("Duration = " + STRING(duration));
 
 	return (duration >= 0.0) ? duration : 0.0;
 }

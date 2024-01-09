@@ -115,7 +115,7 @@ void CubicBSpline::FillSplinePoints(std::vector<glm::vec3>& controlPoints, const
 void CubicBSpline::Draw()
 {
 	mVArray.Bind();
-	mVBuffer.Bind(0);
+	mVBuffer.Bind<Vertex>(0);
 	mIBuffer.Bind(); // i thought that VAO stored state about the index buffer ???
 
 	glDrawElements(mVArray.GetDrawingMode(), mSplinePoints.size() - 6, GL_UNSIGNED_INT, nullptr);

@@ -4,7 +4,7 @@
 
 #include "Debug.h"
 
-#define INITIAL_BUFFER_SIZE 32 * 1024 * 1024; // 32 MB in bytes
+#define INITIAL_BUFFER_SIZE 4 * 1024 * 1024; // 4 in bytes
 
 unsigned int IndexBuffer::boundIBO = 0;
 
@@ -43,10 +43,7 @@ void IndexBuffer::FillBuffer(const void* data, const unsigned int& count, const 
 
 	mBufferSize = count * sizeof(unsigned int);
 
-	if (mCount == 0)
-	{
-		this->mCount = count;
-	}
+	mCount = count;
 }
 
 /// <summary>
@@ -73,10 +70,20 @@ unsigned int IndexBuffer::AppendData(const void* data, const unsigned int& count
 {
 	auto offset = mBufferSize;
 
+	unsigned int* numbers = (unsigned int*)data;
+
+	for (unsigned int i = 0; i < count; i++)
+	{
+		printf("%u\n", *(numbers + i));
+	}
+
 	Bind();
+	AdjustBufferSize(offset + count * sizeof(unsigned int), mUsage);
 	glBufferSubData(GL_ELEMENT_ARRAY_BUFFER, offset, count * sizeof(unsigned int), data);
 
 	mBufferSize += count * sizeof(unsigned int);
+
+	mCount = mBufferSize / sizeof(unsigned int);
 
 	return offset;
 }
@@ -140,6 +147,8 @@ void IndexBuffer::Bind() const
 void IndexBuffer::Unbind() const
 {
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+
+	boundIBO = 0;
 }
 
 const unsigned int& IndexBuffer::GetIndicesCount() const

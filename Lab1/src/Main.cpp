@@ -32,9 +32,9 @@
 #include "Debug.h"
 
 // change directory to yours
-#define SHADER_PATH "C:\\Adam\\repos\\RA_Labs\\Lab1\\Shaders\\"
-#define MODELS_PATH "C:\\Adam\\repos\\RA_Labs\\Lab1\\Models\\"
-#define SPLINE_PATH "C:\\Adam\\repos\\RA_Labs\\Debug\\"
+#define SHADER_PATH "D:\\Programming\\repos\\RA_Labs\\Lab1\\Shaders\\"
+#define MODELS_PATH "D:\\Programming\\repos\\RA_Labs\\Lab1\\Models\\"
+#define SPLINE_PATH "D:\\Programming\\repos\\RA_Labs\\Debug\\"
 
 #define WINDOW_WIDTH 800
 #define WINDOW_HEIGHT 600
@@ -47,43 +47,58 @@ int main(void)
 
     Shader shader(std::string(SHADER_PATH).append("general.glsl"));
 
-    std::vector<glm::vec3> controlPoints{};
-    Parser::ReadFile(std::string(SPLINE_PATH).append("spiral.txt"), controlPoints);
-
-    CubicBSpline spline(controlPoints, 2000);
-
-    Objekt obj("FirstObject", std::string(MODELS_PATH).append("airplane_f16_1.obj"), shader);
-    // Objekt obj("FirstObject", std::string(MODELS_PATH).append("galleon1.obj"), shader);
-    // Objekt obj("FirstObject", std::string(MODELS_PATH).append("tetrahedron_1.obj"), shader);
+    // Objekt obj("FirstObject", std::string(MODELS_PATH).append("airplane_f16_1.obj"), shader);
     
     Renderer renderer(shader);
 
-    renderer.AddDrawableObject(obj);
-    renderer.AddDrawableObject(spline);
+    // renderer.AddDrawableObject(obj);
 
     Camera camera;
     camera.SetShader("view", &shader);
 
-    Transform projection(glm::perspective(45.0f, 1.0f, 0.1f, 1000.0f));
+    // camera.SetPosition({ 0.0f, 0.0f, -1.0f });
+
+    Transform projection(glm::mat4(1.0f)); // glm::perspective(45.0f, 1.0f, 0.1f, 1000.0f));
 
     shader.Bind();
     shader.SetUniformMatrix4f("projection", projection.GetMatrix());
+    shader.SetUniformMatrix4f("model", glm::mat4(1.0f));
+
+    // Testing ground
+
+    VertexArray VAO;
+    VertexBuffer VBO;
+    IndexBuffer IBO;
+
+    VertexBufferLayout layout;
+    layout.Push<float>(3);
+    layout.Push<float>(3);
+
+    VAO.SetLayout(layout, false);
+    VAO.SetDrawingMode(GL_TRIANGLES);
+    VAO.SetUsage(GL_STATIC_DRAW);
+
+    float vertices[] = {
+        -1.0f, 0.5f, 0.0f, 1.0f, 0.0f, 0.0f,
+        -0.5f, 0.5f, 0.0f, 0.0f, 1.0f, 0.0f,
+        -0.5f, -0.5f, 0.0f, 0.0f, 0.0f, 1.0f,
+        -1.0f, -0.5f, 0.0f, 1.0f, 1.0f, 1.0f
+    };
+
+    unsigned int indices[] = {
+        0, 1, 2,
+        2, 3, 0
+    };
+
+    VBO.InsertDataWithOffset(vertices, sizeof(vertices), 0);
+    IBO.InsertDataWithOffset(indices, sizeof(indices) / sizeof(unsigned int), 0);
+
+    VAO.AddBuffer(VBO, IBO);
 
     FpsManager fpsManager(120);
     TimeControl timer;
     timer.Start();
     float deltaTime = 0.0f;
-
-    size_t i = 0;
-
-    auto& points = spline.GetSplinePoints();
-    auto& tangents = spline.GetTangents();
-    auto& rotations = spline.GetRotationMatrices();
-
-    float angle;
-    glm::vec3 axis;
-    glm::vec3 zVec = { 0.0f, 0.0f, 1.0f };
-    float mult;
 
     float timeBetweenPoints = 0.016f; // in seconds
 
@@ -95,44 +110,47 @@ int main(void)
         /* Render here */
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-        obj.SetActive(toggleModel);
+        // obj.SetActive(toggleModel);
 
         // Time passed
         deltaTime += (float)timer.End();
-
-        // Camera
-        camera.SetPosition(glm::vec3(0.0f, 0.0f, -5.0f) - points[i].pos);
-
-        i++;
-
-        if (i >= spline.GetRotationMatrices().size())
-            i = 0;
-
-        obj.GetTransform().SetPosition(spline.GetSplinePoints()[i].pos);
-
-        if (toggleRotation)
-        {
-            axis = glm::cross(zVec, tangents[i].pos);
-
-            mult = zVec.x * tangents[i].pos.x + zVec.y * tangents[i].pos.y + zVec.z * tangents[i].pos.z; // component-wise vector multiplication
-            angle = acos(mult / (glm::length(zVec) * glm::length(glm::normalize(tangents[i].pos))));
-
-            obj.GetTransform().SetOrientation(axis, angle);
-        }
-        else
-        {
-            obj.GetTransform().SetOrientation(rotations[i]);
-        }
 
         // obj.GetTransform().Rotate({ 0.0f, 0.0f, 180.0f }); // upside down model when going towards screen
  
         // Debugging
         {
-            auto& transform = obj.GetTransform();
-            std::cout << "Position = " << Debug::GlmString(transform.GetPosition()).c_str() << "; Rotation = " << Debug::GlmString(transform.GetOrientation()) << std::endl;
+            // auto& transform = obj.GetTransform();
+            // std::cout << "Position = " << Debug::GlmString(transform.GetPosition()).c_str() << "; Rotation = " << Debug::GlmString(transform.GetOrientation()) << std::endl;
         }
 
-        renderer.Draw();
+        VAO.Bind();
+        VBO.Bind<Vertex>(0);
+        IBO.Bind();
+        glDrawElements(VAO.GetDrawingMode(), IBO.GetIndicesCount(), GL_UNSIGNED_INT, nullptr);
+
+        // renderer.Draw();
+
+        if (deltaTime >= 2.0f && deltaTime < 3.0f)
+        {
+            deltaTime += 1.1f;
+
+            unsigned int data[] = { 4, 5, 6, 6, 7, 4 };
+            IBO.InsertDataWithOffset(data, sizeof(data) / sizeof(unsigned int), IBO.GetBufferSize());
+        }
+
+        if (deltaTime >= 5.0f && deltaTime < 6.0f)
+        {
+            deltaTime += 1.1f;
+
+            float data[] = {
+                    0.5f, 0.5f, 0.0f, 1.0f, 0.0f, 0.0f,
+                    1.0f, 0.5f, 0.0f, 0.0f, 1.0f, 0.0f,
+                    1.0f, -0.5f, 0.0f, 0.0f, 0.0f, 1.0f,
+                    0.5f, -0.5f, 0.0f, 1.0f, 1.0f, 1.0f
+            };
+            VBO.InsertDataWithOffset(data, sizeof(data), VBO.GetBufferSize());
+        }
+
 
         /* Swap front and back buffers */
         glfwSwapBuffers(window);

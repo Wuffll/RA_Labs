@@ -28,6 +28,8 @@ private:
 
 	void AssignVertexAttributes();
 
+	static unsigned int ActiveVAO;
+
 	unsigned int mRendererID;
 
 	VertexBufferLayout mLayout;

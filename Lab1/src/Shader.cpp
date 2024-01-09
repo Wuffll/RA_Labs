@@ -7,6 +7,10 @@
 #include <vector>
 #include <fstream>
 
+#include "Debug.h"
+
+unsigned int Shader::ActiveShader = 0;
+
 Shader::Shader(const std::string& filePath)
 	:
 	mFilePath(filePath)
@@ -16,16 +20,26 @@ Shader::Shader(const std::string& filePath)
 
 void Shader::Bind() const
 {
-	glUseProgram(mRendererID);
+	if (mRendererID == 0)
+		Debug::ThrowException("ERROR: Shader mRendererID not set or shader not initiated!!!");
+
+	if(ActiveShader != mRendererID)
+		glUseProgram(mRendererID);
+
+	ActiveShader = mRendererID;
 }
 
 void Shader::Unbind() const
 {
 	glUseProgram(0);
+
+	ActiveShader = 0;
 }
 
 void Shader::SetUniformMatrix4f(const std::string& name, const glm::mat4& matrix)
 {
+	Bind();
+
 	int location = GetUniformLocation(name);
 
 	if (location == -1)
@@ -36,6 +50,8 @@ void Shader::SetUniformMatrix4f(const std::string& name, const glm::mat4& matrix
 
 void Shader::SetUniform4f(const std::string& name, float f0, float f1, float f2, float f3)
 {
+	Bind();
+
 	int location = GetUniformLocation(name);
 
 	if (location == -1)
@@ -46,6 +62,8 @@ void Shader::SetUniform4f(const std::string& name, float f0, float f1, float f2,
 
 void Shader::SetUniform4fv(const std::string& name, const std::vector<float>& vec4f)
 {
+	Bind();
+
 	int location = GetUniformLocation(name);
 
 	if (location == -1)

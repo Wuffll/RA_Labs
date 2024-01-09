@@ -37,6 +37,8 @@ public:
 
 private:
 	
+	static unsigned int ActiveShader; // careful if implementing multithreading (mutex needed)
+
 	void Init(const std::string& filePath);
 
 	ShaderProgramSource ReadShaderFile(const std::string& filePath);

@@ -1,5 +1,7 @@
 #pragma once
 
+#include <GL/glew.h>
+
 class VertexBuffer
 {
 public:
@@ -22,7 +24,13 @@ public:
 	const unsigned int& GetOffset() const;
 
 	void Bind() const;
-	void Bind(const unsigned int& bindingIndex) const;
+
+	template <typename T>
+	void Bind(const unsigned int& bindingIndex) const
+	{
+		glBindVertexBuffer(bindingIndex, mRendererID, 0, sizeof(T));
+	}
+
 	void Unbind() const;
 
 private:

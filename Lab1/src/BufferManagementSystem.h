@@ -36,7 +36,7 @@ public:
 	BufferManagementSystem();
 	~BufferManagementSystem();
 
-	const BufferInfoGroup& GenerateBuffers(const VertexBufferLayout& layout, const bool& buffersSeparated);
+	// const BufferInfoGroup& GenerateBuffers(const VertexBufferLayout& layout, const bool& buffersSeparated);
 
 private:
 
