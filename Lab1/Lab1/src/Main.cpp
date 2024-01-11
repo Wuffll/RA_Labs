@@ -41,18 +41,21 @@
 
 GLFWwindow* InitWindow();
 
-int main(void)
+int main(int argc, char* argv[])
 {
+    std::string ExePath = argv[0];
+    ExePath = ExePath.substr(0, ExePath.find_last_of('\\'));
+
     GLFWwindow* window = InitWindow();
 
-    Shader shader(std::string(SHADER_PATH).append("general.glsl"));
+    Shader shader(ExePath + "\\Shaders\\general.glsl");
 
     std::vector<glm::vec3> controlPoints{};
-    Parser::ReadFile(std::string(SPLINE_PATH).append("spiral.txt"), controlPoints);
+    Parser::ReadFile(ExePath + "\\spiral.txt", controlPoints);
 
     CubicBSpline spline(controlPoints, 2000);
 
-    Objekt obj("FirstObject", std::string(MODELS_PATH).append("airplane_f16_1.obj"), shader);
+    Objekt obj("FirstObject", ExePath + "\\Models\\airplane_f16_1.obj", shader);
     // Objekt obj("FirstObject", std::string(MODELS_PATH).append("galleon1.obj"), shader);
     // Objekt obj("FirstObject", std::string(MODELS_PATH).append("tetrahedron_1.obj"), shader);
     
