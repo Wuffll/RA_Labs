@@ -36,22 +36,20 @@
 #include "Debug.h"
 
 // change directory to yours
-#define SHADER_PATH "D:\\Programming\\repos\\RA_Labs\\Shaders\\"
-#define MODELS_PATH "D:\\Programming\\repos\\RA_Labs\\Models\\"
-#define SPLINE_PATH "D:\\Programming\\repos\\RA_Labs\\Debug\\"
-#define TEXTURES_PATH "D:\\Programming\\repos\\RA_Labs\\Textures\\"
-#define FIRE_TEXTURES "D:\\Programming\\repos\\RA_Labs\\Textures\\Fire\\"
 
 #define WINDOW_WIDTH 800
 #define WINDOW_HEIGHT 600
 
 GLFWwindow* InitWindow();
 
-int main(void)
+int main(int argc, char* argv[])
 {
+    std::string ExePath = argv[0];
+    ExePath = ExePath.substr(0, ExePath.find_last_of('\\'));
+
     GLFWwindow* window = InitWindow();
 
-    Shader shader(std::string(SHADER_PATH).append("general.glsl"));
+    Shader shader(ExePath + "\\Shaders\\general.glsl");
 
     // Objekt obj("FirstObject", std::string(MODELS_PATH).append("airplane_f16_1.obj"), shader);
     
@@ -82,7 +80,7 @@ int main(void)
     for (int i = 0; i < 5; i++)
     {
         textureName[4] = STRING(i).c_str()[0];
-        fireTextures.push_back(Texture(std::string(FIRE_TEXTURES).append(textureName)));
+        fireTextures.push_back(ExePath + "\\Textures\\Fire\\" + textureName);
     }
 
     ParticleContainer container(shader, fireTextures, camera, 5, {0.0f, 0.0f, -2.5f});
